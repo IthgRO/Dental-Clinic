@@ -19,5 +19,7 @@ namespace Services.Models.User
         public UserRole Role { get; set; }
 
         public string? Timezone { get; set; }
+
+        public required string Password { get; set; }
     }
 }

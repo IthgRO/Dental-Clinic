@@ -35,4 +35,5 @@ public class UserDto
     public DateTime CreatedAt { get; init; }
 
     public DateTime ModifiedAt { get; set; }
+    public required string Password { get; set; }
 }

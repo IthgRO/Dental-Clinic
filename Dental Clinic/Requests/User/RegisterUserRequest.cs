@@ -21,5 +21,6 @@ namespace Dental_Clinic.Requests.User
         public UserRole Role { get; set; }
 
         public string? Timezone { get; set; }
+        public required string Password { get; set; }
     }
 }

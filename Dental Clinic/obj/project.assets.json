@@ -63,6 +63,19 @@
           }
         }
       },
+      "BCrypt.Net-Next/4.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "type": "package",
         "compile": {
@@ -1630,6 +1643,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
+          "BCrypt.Net-Next": "4.0.3",
           "Infrastructure": "1.0.0"
         },
         "compile": {
@@ -1693,6 +1707,37 @@
         "azureicon.png",
         "lib/netstandard2.0/Azure.Identity.dll",
         "lib/netstandard2.0/Azure.Identity.xml"
+      ]
+    },
+    "BCrypt.Net-Next/4.0.3": {
+      "sha512": "W+U9WvmZQgi5cX6FS5GDtDoPzUCV4LkBLkywq/kRZhuDwcbavOzcDAr3LXJFqHUi952Yj3LEYoWW0jbEUQChsA==",
+      "type": "package",
+      "path": "bcrypt.net-next/4.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "bcrypt.net-next.4.0.3.nupkg.sha512",
+        "bcrypt.net-next.nuspec",
+        "ico.png",
+        "lib/net20/BCrypt.Net-Next.dll",
+        "lib/net20/BCrypt.Net-Next.xml",
+        "lib/net35/BCrypt.Net-Next.dll",
+        "lib/net35/BCrypt.Net-Next.xml",
+        "lib/net462/BCrypt.Net-Next.dll",
+        "lib/net462/BCrypt.Net-Next.xml",
+        "lib/net472/BCrypt.Net-Next.dll",
+        "lib/net472/BCrypt.Net-Next.xml",
+        "lib/net48/BCrypt.Net-Next.dll",
+        "lib/net48/BCrypt.Net-Next.xml",
+        "lib/net5.0/BCrypt.Net-Next.dll",
+        "lib/net5.0/BCrypt.Net-Next.xml",
+        "lib/net6.0/BCrypt.Net-Next.dll",
+        "lib/net6.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.0/BCrypt.Net-Next.dll",
+        "lib/netstandard2.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.1/BCrypt.Net-Next.dll",
+        "lib/netstandard2.1/BCrypt.Net-Next.xml",
+        "readme.md"
       ]
     },
     "Humanizer.Core/2.14.1": {
@@ -4746,6 +4791,7 @@
   "projectFileDependencyGroups": {
     "net9.0": [
       "AutoMapper >= 13.0.1",
+      "BCrypt.Net-Next >= 4.0.3",
       "Infrastructure >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 9.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.0",
@@ -4754,23 +4800,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\theov\\.nuget\\packages\\": {},
+    "C:\\Users\\Pc\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj",
+      "projectUniqueName": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj",
       "projectName": "Dental Clinic",
-      "projectPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj",
-      "packagesPath": "C:\\Users\\theov\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Dental Clinic\\obj\\",
+      "projectPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj",
+      "packagesPath": "C:\\Users\\Pc\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Dental Clinic\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\theov\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4785,11 +4831,11 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj"
+            "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj"
             },
-            "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Services\\Services.csproj": {
-              "projectPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Services\\Services.csproj"
+            "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Services\\Services.csproj": {
+              "projectPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Services\\Services.csproj"
             }
           }
         }
@@ -4813,6 +4859,10 @@
           "AutoMapper": {
             "target": "Package",
             "version": "[13.0.1, )"
+          },
+          "BCrypt.Net-Next": {
+            "target": "Package",
+            "version": "[4.0.3, )"
           },
           "Microsoft.EntityFrameworkCore": {
             "target": "Package",
