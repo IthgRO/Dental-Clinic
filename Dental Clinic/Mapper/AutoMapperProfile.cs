@@ -13,6 +13,9 @@ namespace Dental_Clinic.Mapper
             CreateMap<RegisterUserRequest, RegisterUserDto>()
                     .ReverseMap();
 
+            CreateMap<LoginUserRequest, LoginUserDto>()
+                .ReverseMap();
+
             #endregion
         }
     }
