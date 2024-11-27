@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj": {}
+    "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj": {}
   },
   "projects": {
-    "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj": {
+    "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj",
+        "projectUniqueName": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj",
         "projectName": "Dental Clinic",
-        "projectPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj",
-        "packagesPath": "C:\\Users\\theov\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Dental Clinic\\obj\\",
+        "projectPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Dental Clinic\\Dental Clinic.csproj",
+        "packagesPath": "C:\\Users\\Pc\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Dental Clinic\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\theov\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -32,11 +32,11 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj"
+              "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj"
               },
-              "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Services\\Services.csproj": {
-                "projectPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Services\\Services.csproj"
+              "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Services\\Services.csproj": {
+                "projectPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Services\\Services.csproj"
               }
             }
           }
@@ -113,20 +113,20 @@
         }
       }
     },
-    "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj": {
+    "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\theov\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\Pc\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\theov\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -194,20 +194,20 @@
         }
       }
     },
-    "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Services\\Services.csproj": {
+    "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Services\\Services.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Services\\Services.csproj",
+        "projectUniqueName": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Services\\Services.csproj",
         "projectName": "Services",
-        "projectPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Services\\Services.csproj",
-        "packagesPath": "C:\\Users\\theov\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Services\\obj\\",
+        "projectPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Services\\Services.csproj",
+        "packagesPath": "C:\\Users\\Pc\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Services\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\theov\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -222,8 +222,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\theov\\source\\repos\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj"
+              "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\Pc\\OneDrive\\Documents\\Project\\Dental-Clinic\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
