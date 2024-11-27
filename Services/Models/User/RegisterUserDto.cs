@@ -6,7 +6,7 @@ namespace Services.Models.User
     {
         public int Id { get; set; }
 
-        public int ClinicId { get; set; }
+        public int? ClinicId { get; set; }
 
         public required string Email { get; set; }
 

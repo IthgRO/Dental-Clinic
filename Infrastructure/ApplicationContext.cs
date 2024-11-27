@@ -13,6 +13,8 @@ namespace Infrastructure
 
         public DbSet<AppointmentDto> Appointments { get; set; }
 
+        public DbSet<ServiceDto> Services { get; set; }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
     }
 }
