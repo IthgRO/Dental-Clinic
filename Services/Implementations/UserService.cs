@@ -32,7 +32,7 @@ namespace Services.Implementations
                     new Claim(ClaimTypes.Role, userFromDb.Role.ToString())
                 };
 
-                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("abdivbeiuvbiaubviubvierbvuwybvyuwbvueybve"));
+                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("abdivbeiuvbiaubviubviwnvjwnviubwnifbwuybvuwbfubvuebvuybwbfbfgwevgyv4354366erbvuwybvyuwbvueybve"));
 
                 var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 

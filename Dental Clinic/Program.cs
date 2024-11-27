@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = "Server=tcp:itgh.database.windows.net,1433;Initial Catalog=DentalSolutionDb;Persist Security Info=False;User ID=indridiGG;Password=icelandPower33;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-var jwt_secret = "abdivbeiuvbiaubviubvierbvuwybvyuwbvueybve";
+var jwt_secret = "abdivbeiuvbiaubviubviwnvjwnviubwnifbwuybvuwbfubvuebvuybwbfbfgwevgyv4354366erbvuwybvyuwbvueybve";
 
 builder.Services.AddDataAccess(connectionString);
 builder.Services.AddDependencyInjection();
