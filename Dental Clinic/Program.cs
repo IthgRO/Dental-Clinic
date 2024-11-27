@@ -1,4 +1,5 @@
 using Dental_Clinic.StartupExtensions;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureCors();
 builder.Services.AddMvc();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddFluentValidationAutoValidation();
+
 
 
 var app = builder.Build();
