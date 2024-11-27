@@ -1,4 +1,5 @@
-﻿using Infrastructure.Models;
+﻿using Dental_Clinic.Dtos;
+using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
@@ -6,7 +7,11 @@ namespace Infrastructure
     public class ApplicationContext : DbContext
     {
 
-        public DbSet<MockUser> Users { get; set; }
+        public DbSet<UserDto> Users { get; set; }
+
+        public DbSet<ClinicDto> Clinics { get; set; }
+
+        public DbSet<AppointmentDto> Appointments { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
     }
