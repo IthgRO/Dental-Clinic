@@ -6,7 +6,7 @@ public class UserDto
 {
     public int Id { get; set; }
 
-    public int ClinicId { get; set; }
+    public int? ClinicId { get; set; }
 
     [Required]
     [EmailAddress]
