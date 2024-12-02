@@ -15,6 +15,10 @@ namespace Infrastructure
 
         public DbSet<ServiceDto> Services { get; set; }
 
+        public DbSet<ReminderDto> Reminders { get; set; }
+
+        public DbSet<ReminderSettingsDto> ReminderSettings {  get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserDto>()
