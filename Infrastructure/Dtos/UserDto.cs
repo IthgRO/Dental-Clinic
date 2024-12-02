@@ -8,6 +8,8 @@ public class UserDto
 
     public int? ClinicId { get; set; }
 
+    public ClinicDto? Clinic { get; set; }
+
     [Required]
     [EmailAddress]
     [StringLength(100)]
@@ -35,5 +37,8 @@ public class UserDto
     public DateTime CreatedAt { get; init; }
 
     public DateTime ModifiedAt { get; set; }
+
     public required string Password { get; set; }
+
+    public ICollection<ServiceDto> Services { get; set; } = new List<ServiceDto>();
 }

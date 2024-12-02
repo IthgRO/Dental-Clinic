@@ -1,11 +1,9 @@
 ﻿using Dental_Clinic.Dtos;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Services.Interfaces;
 using Services.Models.User;
-using Microsoft.EntityFrameworkCore;
-
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -73,6 +71,17 @@ namespace Services.Implementations
 
             _db.Users.Add(newUser);
             await _db.SaveChangesAsync();
+        }
+
+        public async Task<DentistListDto> GetAvailableDentists()
+        {
+            var dentists = await _db.Users
+                .Where(x => x.Role == Dental_Clinic.Enums.UserRole.Dentist)
+                .Include(x => x.Clinic)
+                .Include(x => x.Services)
+                .ToListAsync();
+
+            return new DentistListDto { Dentists = dentists };
         }
     }
 }

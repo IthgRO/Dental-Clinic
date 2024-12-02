@@ -33,4 +33,6 @@ public class ClinicDto
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
+
+    public ICollection<UserDto> Users { get; set; } = new List<UserDto>();
 }
