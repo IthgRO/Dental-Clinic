@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Dental_Clinic.Enums;
 namespace Dental_Clinic.Dtos;
 

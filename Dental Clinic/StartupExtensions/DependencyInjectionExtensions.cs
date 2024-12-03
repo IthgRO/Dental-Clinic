@@ -10,6 +10,7 @@ namespace Dental_Clinic.StartupExtensions
         public static IServiceCollection AddDependencyInjection(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
 
             services.AddScoped<IValidator<RegisterUserRequest>, RegisterUserRequestAbstractValidator>();
 

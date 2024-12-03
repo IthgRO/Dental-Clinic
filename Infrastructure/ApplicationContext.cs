@@ -1,5 +1,4 @@
 ﻿using Dental_Clinic.Dtos;
-using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
@@ -18,6 +17,8 @@ namespace Infrastructure
         public DbSet<ReminderDto> Reminders { get; set; }
 
         public DbSet<ReminderSettingsDto> ReminderSettings {  get; set; }
+
+        public DbSet<DentistScheduleDto> DentistSchedules { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
