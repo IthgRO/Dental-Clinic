@@ -1,0 +1,8 @@
+POST http://localhost:5282/api/sendemail
+Content-Type: application/json
+
+{
+    "to": "timoteiturculetu@gmail.com",
+    "subject": "Email confirmation of booking",
+    "body": "<i>This is a confirmation email</i>"
+}

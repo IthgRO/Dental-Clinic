@@ -2,6 +2,9 @@ using Dental_Clinic.StartupExtensions;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Services.Implementations;
+using Services.Interfaces;
+using Services.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,7 @@ builder.Services.ConfigureCors();
 builder.Services.AddMvc();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
