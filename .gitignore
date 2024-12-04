@@ -115,3 +115,6 @@ dump.rdb
 # Rider
 .idea
 
+# Ignore build output directories
+obj/
+
