@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20241204132325_AddNavigationToAppointment")]
+    partial class AddNavigationToAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,8 +72,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ClinicId");
 
                     b.HasIndex("DentistId");
-
-                    b.HasIndex("ServiceId");
 
                     b.ToTable("Appointments");
                 });
@@ -362,17 +363,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Dental_Clinic.Dtos.ServiceDto", "Service")
-                        .WithMany("Appointments")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Clinic");
 
                     b.Navigation("Dentist");
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("Dental_Clinic.Dtos.ServiceDto", b =>
@@ -398,11 +391,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Dental_Clinic.Dtos.ServiceDto", b =>
-                {
-                    b.Navigation("Appointments");
                 });
 
             modelBuilder.Entity("Dental_Clinic.Dtos.UserDto", b =>

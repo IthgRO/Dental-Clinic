@@ -31,6 +31,23 @@ namespace Infrastructure
                 .HasOne(x => x.User)
                 .WithMany(x => x.Services)
                 .HasForeignKey(x => x.UserId);
+
+            modelBuilder.Entity<AppointmentDto>()
+                .HasOne(x => x.Dentist)
+                .WithMany(x => x.Appointments)
+                .HasForeignKey(x => x.DentistId);
+
+            modelBuilder.Entity<AppointmentDto>()
+                .HasOne(x => x.Clinic)
+                .WithMany(x => x.Appointments)
+                .HasForeignKey(x => x.ClinicId);
+
+            modelBuilder.Entity<AppointmentDto>()
+                .HasOne(x => x.Service)
+                .WithMany(x => x.Appointments)
+                .HasForeignKey(x => x.ServiceId);
+
+
         }
        
 

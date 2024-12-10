@@ -1,5 +1,4 @@
-﻿using Dental_Clinic.Dtos;
-using Infrastructure;
+﻿using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Models.Reservation;
@@ -19,26 +18,38 @@ namespace Services.Implementations
 
             var freeSlots = new List<FreeSlot>();
 
-            startDate = startDate.Date;
-            endDate = endDate.Date;
+            startDate = SetToFixHour(startDate);
+            endDate = SetToFixHour(endDate);
 
             var appointments = await _db.Appointments
-                .Where(x => x.DentistId == dentistId && x.StartTime >= startDate && x.EndTime <= endDate)
+                .Where(x => x.DentistId == dentistId && x.StartTime >= startDate && x.EndTime <= endDate && x.Status != Dental_Clinic.Enums.AppointmentStatus.Cancelled)
                 .ToListAsync();
 
-            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+            for (DateTime date = startDate.Date; date <= endDate.Date; date = date.AddDays(1))
             {
-                var default_start_time = TimeSpan.FromHours(9);
-                var default_end_date = TimeSpan.FromHours(17);
-
-                for (var candidateHour = default_start_time; candidateHour < default_end_date; candidateHour += TimeSpan.FromHours(1))
+                if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
                 {
-                    var candidateDate = date + candidateHour;
-                    var isTaken = appointments.Any(date => date.StartTime == candidateDate);
+                    var default_start_date = TimeSpan.FromHours(9);
+                    var default_end_date = TimeSpan.FromHours(17);
 
-                    if (!isTaken)
+                    if (date == startDate.Date)
                     {
-                        freeSlots.Add(new FreeSlot { StartTime = candidateDate, EndTime = candidateDate.AddHours(1) });
+                        default_start_date = TimeSpan.FromHours(startDate.Hour);
+                    }
+                    if (date == endDate.Date)
+                    {
+                        default_end_date = TimeSpan.FromHours(endDate.Hour);
+                    }
+
+                    for (var candidateHour = default_start_date; candidateHour < default_end_date; candidateHour += TimeSpan.FromHours(1))
+                    {
+                        var candidateDate = date + candidateHour;
+                        var isTaken = appointments.Any(date => date.StartTime == candidateDate);
+
+                        if (!isTaken)
+                        {
+                            freeSlots.Add(new FreeSlot { StartTime = candidateDate, EndTime = candidateDate.AddHours(1) });
+                        }
                     }
                 }
             }
@@ -51,11 +62,12 @@ namespace Services.Implementations
 
             await ValidateIfDentistIsFree(dentistId, startDate);
 
-            var newAppointment = new AppointmentDto
+            var newAppointment = new Dental_Clinic.Dtos.AppointmentDto
             {
                 ClinicId = clinicId,
                 DentistId = dentistId,
                 PatientId = userId,
+                ServiceId = serviceId,
                 StartTime = startDate,
                 EndTime = startDate.AddHours(1),
                 Timezone = "",
@@ -86,6 +98,63 @@ namespace Services.Implementations
                 throw new Exception("The slot is not available for this dentist!");
             }
         }
-        
+
+        public async Task<List<Models.Reservation.AppointmentDto>> GetMyAppointments(int userId)
+        {
+            var appointments = await _db.Appointments
+                .Where(x => x.PatientId == userId && x.Status != Dental_Clinic.Enums.AppointmentStatus.Cancelled)
+                .Include(x => x.Dentist)
+                .Include(x => x.Clinic)
+                .Include(x => x.Service)
+                .ToListAsync();
+
+            return appointments.Select(x => new Models.Reservation.AppointmentDto
+            {
+                Id = x.Id,
+                ClinicName = x.Clinic.Name,
+                City = x.Clinic.City,
+                DentistFirstName = x.Dentist.FirstName,
+                DentistLastName = x.Dentist.LastName,
+                ServiceName = x.Service.Name,
+                Currency = x.Service.Currency,
+                ServicePrice = x.Service.Price,
+                StartTime = x.StartTime,
+                EndTime = x.EndTime
+            }).ToList();
+        }
+
+        public async Task CancelAppointment(int userId, int appointmentId)
+        {
+            var appointmentFromDb = await _db.Appointments
+                .Where(x => x.Id == appointmentId)
+                .FirstOrDefaultAsync();
+
+            if (appointmentFromDb == null)
+            {
+                throw new Exception("Appointment could not be found! ");
+            }
+
+            else if (appointmentFromDb.PatientId != userId)
+            {
+                throw new Exception("Appointment does not belong to this user! ");
+            }
+
+            appointmentFromDb.Status = Dental_Clinic.Enums.AppointmentStatus.Cancelled;
+            await _db.SaveChangesAsync();
+        }
+
+        private DateTime SetToFixHour(DateTime date)
+        {
+            DateTime updatedDateTime = new DateTime(
+            date.Year,
+            date.Month,
+            date.Day,
+            date.Hour,
+            0,
+            0  
+            );
+
+            return updatedDateTime;
+        }
     }
 }

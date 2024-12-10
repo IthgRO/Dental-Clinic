@@ -15,4 +15,5 @@ public class ServiceDto
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; init; }
     public DateTime UpdatedAt { get; set; }
+    public ICollection<AppointmentDto> Appointments { get; set; } = new List<AppointmentDto>();
 }

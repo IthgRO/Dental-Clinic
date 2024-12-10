@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dental_Clinic.Requests.Appointment;
+using Dental_Clinic.Responses.Appointment;
 using Dental_Clinic.Responses.Dentist;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,6 @@ namespace Dental_Clinic.Controllers
             _mapper = mapper;
         }
 
-        [Authorize]
         [HttpGet("seeAvailableDentists")]
         public async Task<IActionResult> GetAvailableDentists()
         {
@@ -33,7 +33,6 @@ namespace Dental_Clinic.Controllers
             return Ok(_mapper.Map<AvailableDentistsResponse>(dentists));
         }
 
-        [Authorize]
         [HttpPost("seeAvailableSlots")]
         public async Task<IActionResult> GetAvailableSlots(GetFreeSlotsRequest request)
         {
@@ -51,6 +50,29 @@ namespace Dental_Clinic.Controllers
 
             await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, request.StartDate);
 
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("seeMyAppointments")]
+        public async Task<IActionResult> SeeMyAppointments()
+        {
+            var user = User.FindFirstValue(ClaimTypes.Actor);
+            var userId = Int32.Parse(user);
+
+            var appointments = await _appointmentService.GetMyAppointments(userId);
+
+            return Ok(_mapper.Map<List<AppointmentViewModel>>(appointments));
+        }
+
+        [Authorize]
+        [HttpPost("cancelAppointment")]
+        public async Task<IActionResult> CancelAppointment(CancelAppointmentRequest request)
+        {
+            var user = User.FindFirstValue(ClaimTypes.Actor);
+            var userId = Int32.Parse(user);
+
+            await _appointmentService.CancelAppointment(userId, request.AppointmentId);
             return Ok();
         }
 

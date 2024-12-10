@@ -15,6 +15,10 @@ namespace Dental_Clinic.Responses.Dentist
 
         public required string Phone { get; set; }
 
+        public int MaximumPrice { get; set; }
+
+        public int MinimumPrice { get; set; }
+
         public ClinicViewModel? Clinic { get; set; }
 
         public List<ServiceViewModel>? Services { get; set; }

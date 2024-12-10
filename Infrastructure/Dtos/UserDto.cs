@@ -41,4 +41,6 @@ public class UserDto
     public required string Password { get; set; }
 
     public ICollection<ServiceDto> Services { get; set; } = new List<ServiceDto>();
+
+    public ICollection<AppointmentDto> Appointments { get; set; } = new List<AppointmentDto>();
 }
