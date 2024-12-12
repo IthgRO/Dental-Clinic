@@ -1,0 +1,27 @@
+POST http://localhost:5282/api/dentist/bookAppointment
+Content-Type: application/json
+Authorization: Bearer abdivbeiuvbiaubviubviwnvjwnviubwnifbwuybvuwbfubvuebvuybwbfbfgwevgyv4354366erbvuwybvyuwbvueybve
+
+
+    {
+    "to": "everett.vandervort@ethereal.email",
+    "subject": "Appointment Confirmation",
+    "body": "Your appointment is scheduled for the specified date and time.",
+    "startTime": "2024-12-10T09:00:00",
+    "clinicId": 1,
+    "serviceId": 4,
+    "dentistId": 9,
+    "timeZone": "Pacific Standard Time"
+    }
+
+POST https://dentalbackend.azurewebsites.net/api/dentist/bookAppointment
+Content-Type: application/json
+Cookie: ARRAffinity=86c8e5986fea69b1b779af8bca1ab93a41b31587b3dbd746f80e391e3c8be33f; ARRAffinitySameSite=86c8e5986fea69b1b779af8bca1ab93a41b31587b3dbd746f80e391e3c8be33f
+Authorization: Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA5LzA5L2lkZW50aXR5L2NsYWltcy9hY3RvciI6IjUiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQYXRpZW50IiwiZXhwIjoxNzY0NTA4MTg3fQ.i_gvbB7YEMoz8zjdDKCN_ODsfehJSfUYfIibAk4G0lHw5NYUHcebGSMY6nN1Vh1pFwyGrzDNfsd5wfz24DEqKQ
+
+{
+    "DentistId": "9",
+    "ClinicId": "2",
+    "ServiceId": "3",
+    "StartDate": "2015-11-01T12:20:10"
+}

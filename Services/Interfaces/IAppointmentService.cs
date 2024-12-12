@@ -6,7 +6,7 @@ namespace Services.Interfaces
     {
         public Task<List<FreeSlot>> GetAvailableTimeSlots(int dentistId, DateTime startDate, DateTime endDate);
 
-        public Task BookAppointment(int userId, int dentistId, int serviceId, int clinicId, DateTime startDate);
+        public Task<Dental_Clinic.Dtos.AppointmentDto> BookAppointment(int userId, int dentistId, int serviceId, int clinicId, DateTime startDate);
 
         public Task<List<AppointmentDto>> GetMyAppointments(int userId);
 

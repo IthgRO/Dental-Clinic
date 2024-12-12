@@ -115,3 +115,5 @@ dump.rdb
 # Rider
 .idea
 
+obj/
+

@@ -1,4 +1,5 @@
-﻿using Services.Models.User;
+﻿using Dental_Clinic.Dtos;
+using Services.Models.User;
 
 namespace Services.Interfaces
 {
@@ -9,5 +10,7 @@ namespace Services.Interfaces
         public Task<string> Login(LoginUserDto user);
 
         public Task<DentistListDto> GetAvailableDentists();
+
+        Task<UserDto?> GetUserByIdAsync(int userId);
     }
 }

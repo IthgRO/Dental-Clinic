@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Dental_Clinic.Dtos;
+using Dental_Clinic.Enums;
 using Dental_Clinic.Requests.Appointment;
 using Dental_Clinic.Responses.Appointment;
 using Dental_Clinic.Responses.Dentist;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
+using Services.Models;
 using System.Security.Claims;
 
 namespace Dental_Clinic.Controllers
@@ -17,10 +20,13 @@ namespace Dental_Clinic.Controllers
         private readonly IUserService _userService;
         private readonly IAppointmentService _appointmentService;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
+        private readonly IReminderService _reminderService;
 
-        public DentistController(IUserService userService, IAppointmentService appointmentService, IMapper mapper)
+        public DentistController(IUserService userService, IAppointmentService appointmentService, IEmailService emailService, IMapper mapper)
         {
             _userService = userService;
+            _emailService = emailService;
             _appointmentService = appointmentService;
             _mapper = mapper;
         }
@@ -47,9 +53,38 @@ namespace Dental_Clinic.Controllers
         {
             var user = User.FindFirstValue(ClaimTypes.Actor);
             var userId = Int32.Parse(user);
+            var currentUser = await _userService.GetUserByIdAsync(userId);
+            if (currentUser == null)
+            {
+                return NotFound("User not found.");
+            }
+            
+            var booked_appointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, request.StartDate);
+            
+            var reminder = new ReminderDto
+            {
+                AppointmentId = booked_appointment.Id,
+                Type = ReminderType.Email, 
+                Status = ReminderStatus.Pending,
+                Timezone = "Pacific Standard Time",
+                SendAt = request.StartDate.AddHours(-1), // 1 hour before the appointment
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                Appointment = booked_appointment
+            };
 
-            await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, request.StartDate);
+            await _reminderService.CreateReminderAsync(reminder);
+            var emailDto = new EmailDto
+            {
+                DentistId = request.DentistId,
+                ClinicId = request.ClinicId,
+                ServiceId = request.ServiceId,
+                StartTime = request.StartDate,
+                To = currentUser.Email,
+                Status = Enums.AppointmentStatus.Pending
 
+            };
+            _emailService.SendEmail(emailDto);
             return Ok();
         }
 

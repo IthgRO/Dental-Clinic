@@ -1,4 +1,5 @@
-﻿using Infrastructure;
+﻿using Dental_Clinic.Enums;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Models.Reservation;
@@ -56,7 +57,7 @@ namespace Services.Implementations
             return freeSlots;
         }
 
-        public async Task BookAppointment(int userId, int dentistId, int serviceId, int clinicId, DateTime startDate)
+        public async Task<Dental_Clinic.Dtos.AppointmentDto> BookAppointment(int userId, int dentistId, int serviceId, int clinicId, DateTime startDate)
         {
             await ValidateIfUserIsDentist(dentistId);
 
@@ -71,12 +72,14 @@ namespace Services.Implementations
                 StartTime = startDate,
                 EndTime = startDate.AddHours(1),
                 Timezone = "",
+                Status = AppointmentStatus.Pending,
                 CreatedAt = DateTime.UtcNow,
-
+                UpdatedAt = DateTime.UtcNow
             };
 
             _db.Appointments.Add(newAppointment);
             await _db.SaveChangesAsync();
+            return newAppointment;
         }
 
         private async Task ValidateIfUserIsDentist(int dentistId)

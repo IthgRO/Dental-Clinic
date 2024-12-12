@@ -83,5 +83,79 @@ namespace Services.Implementations
 
             return new DentistListDto { Dentists = dentists };
         }
+        public async Task<UserDto?> GetUserByIdAsync(int userId)
+    {
+        return await _db.Users
+            .Where(u => u.Id == userId)
+            .Select(u => new UserDto
+            {
+                Id = u.Id,
+                Email = u.Email,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Role = u.Role,
+                Password = u.Password,
+                ClinicId = u.ClinicId,
+                Clinic = u.Clinic != null ? new ClinicDto
+                {
+                    Id = u.Clinic.Id,
+                    Name = u.Clinic.Name,
+                    Address = u.Clinic.Address,
+                    City = u.Clinic.City,
+                    Country = u.Clinic.Country,
+                    Timezone = u.Clinic.Timezone,
+                    Phone = u.Clinic.Phone,
+                    Email = u.Clinic.Email,
+                    IsActive = u.Clinic.IsActive,
+                    CreatedAt = u.Clinic.CreatedAt,
+                    UpdatedAt = u.Clinic.UpdatedAt
+                    
+                } : null,
+                IsActive = u.IsActive,
+                Timezone = u.Timezone,
+                Phone = u.Phone,
+                CreatedAt = u.CreatedAt,
+                ModifiedAt = u.ModifiedAt,
+                Services = u.Services.Select(s => new ServiceDto
+            {
+                Id = s.Id,
+                UserId = s.UserId,
+                User = s.User != null ? new UserDto
+                {
+                    Id = s.User.Id,
+                    ClinicId = s.User.ClinicId,
+                    Email = s.User.Email,
+                    FirstName = s.User.FirstName,
+                    LastName = s.User.LastName,
+                    Phone = s.User.Phone,
+                    Role = s.User.Role,
+                    Timezone = s.User.Timezone,
+                    IsActive = s.User.IsActive,
+                    CreatedAt = s.User.CreatedAt,
+                    ModifiedAt = s.User.ModifiedAt,
+                    Password = s.User.Password
+                } : null,
+                    Name = s.Name,
+                    Description = s.Description,
+                    Duration = s.Duration,
+                    Price = s.Price,
+                    Currency = s.Currency,
+                    Category = s.Category,
+                    IsActive = s.IsActive,
+                    CreatedAt = s.CreatedAt,
+                    UpdatedAt = s.UpdatedAt
+                }).ToList(),
+                Appointments = u.Appointments.Select(a => new AppointmentDto
+                {
+                    Id = a.Id,
+                    StartTime = a.StartTime,
+                    EndTime = a.EndTime,
+                    Status = a.Status,
+                    Timezone =a.Timezone
+
+                }).ToList()
+            })
+            .FirstOrDefaultAsync();
+        }
     }
 }

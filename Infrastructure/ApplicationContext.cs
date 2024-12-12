@@ -47,6 +47,23 @@ namespace Infrastructure
                 .WithMany(x => x.Appointments)
                 .HasForeignKey(x => x.ServiceId);
 
+            base.OnModelCreating(modelBuilder);
+
+            // Configure Reminder
+            modelBuilder.Entity<ReminderDto>()
+                .HasKey(r => r.Id);
+
+            modelBuilder.Entity<ReminderDto>()
+                .Property(r => r.SendAt)
+                .IsRequired();
+
+            // Configure One-to-One Relationship
+            modelBuilder.Entity<ReminderDto>()
+                .HasOne(r => r.Appointment) // Reminder references Appointment
+                .WithOne()  // Appointment references Reminder
+                .HasForeignKey<ReminderDto>(r => r.AppointmentId) // Foreign key
+                .OnDelete(DeleteBehavior.Cascade); 
+
 
         }
        

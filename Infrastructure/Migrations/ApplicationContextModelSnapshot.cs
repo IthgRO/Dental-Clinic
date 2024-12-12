@@ -208,6 +208,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
                     b.ToTable("Reminders");
                 });
 
@@ -373,6 +376,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Dentist");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("Dental_Clinic.Dtos.ReminderDto", b =>
+                {
+                    b.HasOne("Dental_Clinic.Dtos.AppointmentDto", "Appointment")
+                        .WithOne()
+                        .HasForeignKey("Dental_Clinic.Dtos.ReminderDto", "AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
                 });
 
             modelBuilder.Entity("Dental_Clinic.Dtos.ServiceDto", b =>
