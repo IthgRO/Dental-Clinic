@@ -24,6 +24,8 @@ public class EmailService: IEmailService
         var clinicName = _clinicService.GetClinicNameById(request.ClinicId);
         var serviceName = _serviceService.GetServiceNameById(request.ServiceId);
         var dentistName = _dentistService.GetDentistNameById(request.DentistId);
+        var formattedStartTime = request.StartTime.ToString("dd") + GetDaySuffix(request.StartTime.Day) +
+                         " of " + request.StartTime.ToString("MMMM h:mm tt");
         var email = new MimeMessage();
         email.From.Add(MailboxAddress.Parse(_config.GetSection("EmailUserName").Value));
         email.To.Add(MailboxAddress.Parse(request.To));
@@ -34,7 +36,7 @@ public class EmailService: IEmailService
                 <hr>
                 <p><strong>Appointment Details:</strong></p>
                 <ul>
-                    <li>Start Time: {request.StartTime}</li>
+                    <li>Start Time: {formattedStartTime}</li>
                     <li>Clinic ID: {clinicName}</li>
                     <li>Service ID: {serviceName}</li>
                     <li>Dentist ID: {dentistName}</li>
@@ -47,5 +49,10 @@ public class EmailService: IEmailService
         smtp.Authenticate(_config.GetSection("EmailUserName").Value, _config.GetSection("EmailPassword").Value);
         smtp.Send(email);
         smtp.Disconnect(true);
+    }
+    private string GetDaySuffix(int day){
+        return (day % 10 == 1 && day != 11) ? "st" :
+            (day % 10 == 2 && day != 12) ? "nd" :
+            (day % 10 == 3 && day != 13) ? "rd" : "th";
     }
 }
