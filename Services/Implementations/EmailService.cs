@@ -1,4 +1,3 @@
-using System;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
@@ -34,7 +33,7 @@ public class EmailService: IEmailService
         email.Body = new TextPart(TextFormat.Html){Text = emailBody};
             
         using var smtp = new MailKit.Net.Smtp.SmtpClient();
-        smtp.Connect(_config.GetSection("EmailHost").Value, 465, SecureSocketOptions.StartTls);
+        smtp.Connect(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
         smtp.Authenticate(_config.GetSection("EmailUserName").Value, _config.GetSection("EmailPassword").Value);
         smtp.Send(email);
         smtp.Disconnect(true);

@@ -23,12 +23,13 @@ namespace Dental_Clinic.Controllers
         private readonly IEmailService _emailService;
         private readonly IReminderService _reminderService;
 
-        public DentistController(IUserService userService, IAppointmentService appointmentService, IEmailService emailService, IMapper mapper)
+        public DentistController(IUserService userService, IAppointmentService appointmentService, IEmailService emailService, IReminderService reminderService, IMapper mapper)
         {
             _userService = userService;
             _emailService = emailService;
             _appointmentService = appointmentService;
             _mapper = mapper;
+            _reminderService = reminderService;
         }
 
         [HttpGet("seeAvailableDentists")]
@@ -67,7 +68,7 @@ namespace Dental_Clinic.Controllers
                 Type = ReminderType.Email, 
                 Status = ReminderStatus.Pending,
                 Timezone = "Pacific Standard Time",
-                SendAt = request.StartDate.AddHours(-1), // 1 hour before the appointment
+                SendAt = request.StartDate.AddHours(-1),
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Appointment = booked_appointment
