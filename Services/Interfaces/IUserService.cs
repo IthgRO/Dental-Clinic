@@ -7,7 +7,7 @@ namespace Services.Interfaces
     {
         public Task RegisterUser(RegisterUserDto user); 
 
-        public Task<string> Login(LoginUserDto user);
+        public Task<LoginResultDto> Login(LoginUserDto user);
 
         public Task<DentistListDto> GetAvailableDentists();
 

@@ -5,6 +5,7 @@ using Dental_Clinic.Responses.Appointment;
 using Dental_Clinic.Responses.Clinic;
 using Dental_Clinic.Responses.Dentist;
 using Dental_Clinic.Responses.Service;
+using Dental_Clinic.Responses.User;
 using Services.Models.Reservation;
 using Services.Models.User;
 
@@ -20,6 +21,9 @@ namespace Dental_Clinic.Mapper
                     .ReverseMap();
 
             CreateMap<LoginUserRequest, LoginUserDto>()
+                .ReverseMap();
+
+            CreateMap<LoginResultDto, LoginResponse>()
                 .ReverseMap();
 
             #endregion

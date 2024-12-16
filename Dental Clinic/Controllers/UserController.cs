@@ -33,9 +33,9 @@ namespace Dental_Clinic.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginUserRequest request)
         {
-            var jwt = await _userService.Login(_mapper.Map<LoginUserDto>(request));
+            var result = await _userService.Login(_mapper.Map<LoginUserDto>(request));
 
-            return Ok(new LoginResponse { Jwt = jwt});
+            return Ok(_mapper.Map<LoginResponse>(result));
         }
     }
 }

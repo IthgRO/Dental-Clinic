@@ -11,6 +11,11 @@ namespace Dental_Clinic.StartupExtensions
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAppointmentService, AppointmentService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IClinicService, ClinicService>();
+            services.AddScoped<IReminderService, ReminderService>();
+            services.AddScoped<IDentistService, DentistService>();
+            services.AddScoped<IServiceService, ServiceService>();
 
             services.AddScoped<IValidator<RegisterUserRequest>, RegisterUserRequestAbstractValidator>();
 

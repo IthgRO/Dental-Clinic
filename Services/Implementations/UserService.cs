@@ -19,7 +19,7 @@ namespace Services.Implementations
             _db = db;
         }
 
-        public async Task<string> Login(LoginUserDto user)
+        public async Task<LoginResultDto> Login(LoginUserDto user)
         {
             var userFromDb = await _db.Users.Where(x => x.Email == user.Email).FirstOrDefaultAsync();
             if (userFromDb is not null && BCrypt.Net.BCrypt.Verify(user.Password, userFromDb.Password))
@@ -40,7 +40,16 @@ namespace Services.Implementations
                     signingCredentials: cred);
 
                 var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-                return jwt;
+
+                return new LoginResultDto
+                {
+                    Jwt = jwt,
+                    FirstName = userFromDb.FirstName,
+                    LastName = userFromDb.LastName,
+                    Email = userFromDb.Email,
+                    Phone = userFromDb.Phone,
+                    Role = (int)userFromDb.Role
+                };
             }
             else
             {
