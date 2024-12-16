@@ -70,7 +70,8 @@ namespace Services.Implementations
                 CreatedAt = DateTime.UtcNow,
                 Timezone = user.Timezone,
                 IsActive = true,
-                Password = hashedPassword
+                Password = hashedPassword,
+                Role = user.Role,
 
             };
             if (await _db.Users.AnyAsync(u => u.Email == user.Email))

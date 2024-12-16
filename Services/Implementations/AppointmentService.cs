@@ -35,11 +35,11 @@ namespace Services.Implementations
 
                     if (date == startDate.Date)
                     {
-                        default_start_date = TimeSpan.FromHours(startDate.Hour);
+                        default_start_date = TimeSpan.FromHours(Math.Max(startDate.Hour, 9)); 
                     }
                     if (date == endDate.Date)
                     {
-                        default_end_date = TimeSpan.FromHours(endDate.Hour);
+                        default_end_date = TimeSpan.FromHours(Math.Min(endDate.Hour, 17));
                     }
 
                     for (var candidateHour = default_start_date; candidateHour < default_end_date; candidateHour += TimeSpan.FromHours(1))
@@ -94,7 +94,7 @@ namespace Services.Implementations
 
         private async Task ValidateIfDentistIsFree(int dentistId, DateTime startDate)
         {
-            var existingReservation = await _db.Appointments.Where(x => x.DentistId == dentistId && x.StartTime == startDate).AnyAsync();
+            var existingReservation = await _db.Appointments.Where(x => x.DentistId == dentistId && x.StartTime == startDate && x.Status != AppointmentStatus.Cancelled).AnyAsync();
 
             if (existingReservation)
             {
