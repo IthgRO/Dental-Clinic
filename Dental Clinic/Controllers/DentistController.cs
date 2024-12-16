@@ -68,7 +68,7 @@ namespace Dental_Clinic.Controllers
                 Type = ReminderType.Email, 
                 Status = ReminderStatus.Pending,
                 Timezone = "Pacific Standard Time",
-                SendAt = request.StartDate.AddHours(-1),
+                SendAt = DateTime.UtcNow.AddMinutes(1),
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Appointment = booked_appointment

@@ -52,7 +52,7 @@ public class ReminderHostedService : BackgroundService
         
                         };
 
-                        emailService.SendEmail(email);
+                        emailService.SendReminderEmail(email);
 
                         await reminderService.MarkReminderAsSentAsync(reminder.Id);
                     }

@@ -6,4 +6,5 @@ namespace Services.Interfaces;
 public interface IEmailService
 {
     void SendEmail(EmailDto request);
+    void SendReminderEmail(EmailDto request);
 }
