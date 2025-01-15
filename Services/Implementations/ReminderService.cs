@@ -53,6 +53,7 @@ public class ReminderService : IReminderService
                     ClinicId = r.Appointment.ClinicId,
                     DentistId = r.Appointment.DentistId,
                     PatientId = r.Appointment.PatientId,
+                    ServiceId = r.Appointment.ServiceId,
                     Timezone = r.Appointment.Timezone
                 } : null
             })
