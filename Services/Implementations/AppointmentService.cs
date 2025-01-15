@@ -146,6 +146,46 @@ namespace Services.Implementations
             await _db.SaveChangesAsync();
         }
 
+        public async Task UpdateAppointment(int userId, int appointmentId, DateTime newDate)
+        {
+            var appointmentFromDb = await _db.Appointments
+                .Where(x => x.Id == appointmentId)
+                .FirstOrDefaultAsync();
+
+            if (appointmentFromDb == null)
+            {
+                throw new Exception("Appointment could not be found! ");
+            }
+
+            else if (appointmentFromDb.PatientId != userId)
+            {
+                throw new Exception("Appointment does not belong to this user! ");
+            }
+
+            await ValidateIfDentistIsFree(appointmentFromDb.DentistId, newDate);
+
+            var reminderFromDb = await _db.Reminders
+                .Where(x => x.AppointmentId == appointmentId)
+                .FirstOrDefaultAsync();
+
+            if (reminderFromDb == null)
+            {
+                throw new Exception("The appointment for the reminder could not be found!");
+            }
+
+            else if (reminderFromDb.Status == ReminderStatus.Sent)
+            {
+                throw new Exception("It is too late for you to change the appointment!");
+            }
+
+            appointmentFromDb.StartTime = newDate;
+            appointmentFromDb.EndTime = newDate.AddHours(1);
+            reminderFromDb.SendAt = newDate.AddHours(-1);
+            reminderFromDb.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+        }
+
         private DateTime SetToFixHour(DateTime date)
         {
             DateTime updatedDateTime = new DateTime(

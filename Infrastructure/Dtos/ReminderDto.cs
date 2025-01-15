@@ -8,7 +8,7 @@ public class ReminderDto
     public ReminderType Type { get; set; }
     public ReminderStatus Status { get; set; }
     public required string Timezone { get; init; }
-    public DateTime SendAt { get; init; }
+    public DateTime SendAt { get; set; }
     public DateTime? SentAt { get; set; }
     public DateTime CreatedAt { get; init; }
     public DateTime UpdatedAt { get; set; }

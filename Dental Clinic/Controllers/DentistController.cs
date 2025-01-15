@@ -90,6 +90,17 @@ namespace Dental_Clinic.Controllers
         }
 
         [Authorize]
+        [HttpPost("updateAppointment")]
+        public async Task<IActionResult> UpdateAppointment(UpdateAppointmentRequest request)
+        {
+            var user = User.FindFirstValue(ClaimTypes.Actor);
+            var userId = Int32.Parse(user);
+
+            await _appointmentService.UpdateAppointment(userId, request.AppointmentId, request.NewDate);
+            return Ok();
+        }
+
+        [Authorize]
         [HttpGet("seeMyAppointments")]
         public async Task<IActionResult> SeeMyAppointments()
         {
