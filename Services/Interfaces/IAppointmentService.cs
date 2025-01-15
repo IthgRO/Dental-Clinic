@@ -11,5 +11,7 @@ namespace Services.Interfaces
         public Task<List<AppointmentDto>> GetMyAppointments(int userId);
 
         public Task CancelAppointment(int userId, int appointmentId);
+
+        public Task UpdateAppointment(int userId, int appointmentId, DateTime newDate);
     }
 }

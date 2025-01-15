@@ -33,7 +33,7 @@ public class ReminderService : IReminderService
     public async Task<IEnumerable<ReminderDto>> GetPendingRemindersAsync()
     {
         return await _db.Reminders
-            .Where(r => r.Status == ReminderStatus.Pending && r.SendAt <= DateTime.UtcNow)
+            .Where(r => r.Status == ReminderStatus.Pending && r.SendAt <= DateTime.UtcNow.AddHours(2))
             .Select(r => new ReminderDto
             {
                 Id = r.Id,
