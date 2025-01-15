@@ -35,7 +35,7 @@ namespace Services.Implementations
 
                     if (date == startDate.Date)
                     {
-                        default_start_date = TimeSpan.FromHours(Math.Max(startDate.Hour, 9)); 
+                        default_start_date = TimeSpan.FromHours(Math.Max(startDate.Hour, 9));
                     }
                     if (date == endDate.Date)
                     {
@@ -84,7 +84,7 @@ namespace Services.Implementations
 
         private async Task ValidateIfUserIsDentist(int dentistId)
         {
-            var isDentist = await _db.Users.Where(x => x.Id == dentistId && x.Role ==Dental_Clinic.Enums.UserRole.Dentist).AnyAsync();
+            var isDentist = await _db.Users.Where(x => x.Id == dentistId && x.Role == Dental_Clinic.Enums.UserRole.Dentist).AnyAsync();
 
             if (!isDentist)
             {
@@ -154,7 +154,7 @@ namespace Services.Implementations
             date.Day,
             date.Hour,
             0,
-            0  
+            0
             );
 
             return updatedDateTime;
