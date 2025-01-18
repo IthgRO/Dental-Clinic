@@ -49,8 +49,10 @@ namespace Dental_Clinic.Mapper
                 .ReverseMap();
 
             CreateMap<UserDto, DentistViewModel>()
-                .ForMember(x => x.MaximumPrice, opt => opt.MapFrom(x => x.Services.Max(x => x.Price)))
-                .ForMember(x => x.MinimumPrice, opt => opt.MapFrom(x => x.Services.Min(x => x.Price)))
+                .ForMember(x => x.MaximumPrice, opt => opt.MapFrom(x =>
+                    x.Services.Select(s => s.Price).DefaultIfEmpty(0).Max()))
+                .ForMember(x => x.MinimumPrice, opt => opt.MapFrom(x =>
+                    x.Services.Select(s => s.Price).DefaultIfEmpty(0).Min()))
                 .ReverseMap();
 
             #endregion

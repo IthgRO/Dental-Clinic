@@ -13,12 +13,16 @@ namespace Dental_Clinic.Controllers
     {
 
         private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
+        private readonly IPasswordService _passwordService;
         private readonly IMapper _mapper;
 
 
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IUserService userService, IPasswordService passwordService, IEmailService emailService, IMapper mapper)
         {
             _userService = userService;
+            _passwordService = passwordService;
+            _emailService = emailService;
             _mapper = mapper;
         }
 
@@ -36,6 +40,21 @@ namespace Dental_Clinic.Controllers
             var result = await _userService.Login(_mapper.Map<LoginUserDto>(request));
 
             return Ok(_mapper.Map<LoginResponse>(result));
+        }
+
+        [HttpPost("sendPasswordChangeCode")]
+        public async Task<IActionResult> SendPasswordChangeCode(SendPasswordChangeCodeRequest request)
+        {
+            var code = await _passwordService.GetPasswordChangeCode(request.Email);
+            _emailService.SendPasswordChangeCode(code);
+            return Ok();
+        }
+
+        [HttpPost("changeForgottenPassword")]
+        public async Task<IActionResult> ChangeForgottenPassword(ChangeForgottenPasswordRequest request)
+        {
+            await _passwordService.ChangeForgottenPassword(request.Email, request.Code, request.NewPassword);
+            return Ok();
         }
     }
 }
