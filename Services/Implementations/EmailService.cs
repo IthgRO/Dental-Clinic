@@ -4,6 +4,7 @@ using MimeKit;
 using MimeKit.Text;
 using Services.Interfaces;
 using Services.Models;
+using Services.Models.User;
 
 namespace Services.Implementations;
 
@@ -50,6 +51,41 @@ public class EmailService: IEmailService
         smtp.Send(email);
         smtp.Disconnect(true);
     }
+
+    public void SendPasswordChangeCode(PasswordChangeAttemptDto request)
+    {
+        var email = new MimeMessage();
+        email.From.Add(MailboxAddress.Parse(_config.GetSection("EmailUserName").Value));
+        email.To.Add(MailboxAddress.Parse(request.Email));
+        email.Subject = "Password change attempt";
+        var emailBody = $@"
+        <table width='100%' cellpadding='0' cellspacing='0' style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+            <tr>
+                <td style='padding: 20px;'>
+                    <p style='font-size: 16px; margin-bottom: 20px;'>Hello, {request.FirstName}!</p>
+                    <p style='margin-bottom: 20px;'>We received a request to change your password.</p>
+                    <table cellpadding='0' cellspacing='0' style='margin: 20px 0;'>
+                        <tr>
+                            <td style='padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; text-align: center;'>
+                                <h1 style='font-size: 24px; color: #0056b3; margin: 0;'>Your Code: <strong>{request.Code}</strong></h1>
+                            </td>
+                        </tr>
+                    </table>
+                    <p>If you did not request a password change, please contact us immediately.</p>
+                    <p style='margin-top: 20px;'>Thank you,<br>The Support Team</p>
+                </td>
+            </tr>
+        </table>";
+
+        email.Body = new TextPart(TextFormat.Html) { Text = emailBody };
+
+        using var smtp = new MailKit.Net.Smtp.SmtpClient();
+        smtp.Connect(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
+        smtp.Authenticate(_config.GetSection("EmailUserName").Value, _config.GetSection("EmailPassword").Value);
+        smtp.Send(email);
+        smtp.Disconnect(true);
+    }
+
     public void SendReminderEmail(EmailDto request){
         var clinicName = _clinicService.GetClinicNameById(request.ClinicId);
         var serviceName = _serviceService.GetServiceNameById(request.ServiceId);
