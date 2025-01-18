@@ -3,7 +3,6 @@ using Infrastructure.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Models.User;
-using System.CodeDom.Compiler;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
@@ -18,9 +17,32 @@ namespace Services.Implementations
             _context = context;
         }
 
-        public Task ChangeForgottenPassword(string code, string newPassword)
+        public async Task ChangeForgottenPassword(string email, string code, string newPassword)
         {
-            throw new NotImplementedException();
+            var passwordChangeAttemptFromDb = await _context.PasswordChangeAttempts
+                .Where(x => x.Email == email)
+                .FirstOrDefaultAsync() ?? throw new Exception("No password change attempt was found!");
+
+            var userFromDb = await _context.Users
+                .Where(x => x.Email == email)
+                .FirstOrDefaultAsync() ?? throw new Exception("No user with this email could be found!");
+
+            int treshold_in_minutes = 5;
+
+            if (passwordChangeAttemptFromDb.DateCreated >= DateTime.UtcNow.AddMinutes(treshold_in_minutes))
+            {
+                throw new Exception("The code has alreay expired!");
+            }
+
+            if (passwordChangeAttemptFromDb.Code != code)
+            {
+                throw new Exception("The code you provided is incorrect!");
+            }
+
+            userFromDb.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            _context.PasswordChangeAttempts.Remove(passwordChangeAttemptFromDb);
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task<PasswordChangeAttemptDto> GetPasswordChangeCode(string email)

@@ -53,6 +53,7 @@ namespace Dental_Clinic.Controllers
         [HttpPost("changeForgottenPassword")]
         public async Task<IActionResult> ChangeForgottenPassword(ChangeForgottenPasswordRequest request)
         {
+            await _passwordService.ChangeForgottenPassword(request.Email, request.Code, request.NewPassword);
             return Ok();
         }
     }

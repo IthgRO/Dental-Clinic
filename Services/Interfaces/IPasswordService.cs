@@ -5,6 +5,6 @@ namespace Services.Interfaces
     public interface IPasswordService
     {
         Task<PasswordChangeAttemptDto> GetPasswordChangeCode(string email);
-        Task ChangeForgottenPassword(string code, string newPassword);
+        Task ChangeForgottenPassword(string email, string code, string newPassword);
     }
 }
