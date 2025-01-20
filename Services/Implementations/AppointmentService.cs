@@ -3,6 +3,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Models.Reservation;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Services.Implementations
 {
@@ -100,6 +101,15 @@ namespace Services.Implementations
             {
                 throw new Exception("The slot is not available for this dentist!");
             }
+
+            else if (startDate.Hour < 9 || startDate.Hour > 17)
+            {
+                throw new Exception("Dentist is not working during this time interval!");
+            }
+            else if (startDate.DayOfWeek == DayOfWeek.Saturday || startDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                throw new Exception("The dentist is not working on weekends!");
+            }
         }
 
         public async Task<List<Models.Reservation.AppointmentDto>> GetMyAppointments(int userId)
@@ -148,6 +158,8 @@ namespace Services.Implementations
 
         public async Task UpdateAppointment(int userId, int appointmentId, DateTime newDate)
         {
+            newDate = SetToFixHour(newDate);
+
             var appointmentFromDb = await _db.Appointments
                 .Where(x => x.Id == appointmentId)
                 .FirstOrDefaultAsync();

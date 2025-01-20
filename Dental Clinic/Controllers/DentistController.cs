@@ -4,6 +4,7 @@ using Dental_Clinic.Enums;
 using Dental_Clinic.Requests.Appointment;
 using Dental_Clinic.Responses.Appointment;
 using Dental_Clinic.Responses.Dentist;
+using Dental_Clinic.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
@@ -35,92 +36,134 @@ namespace Dental_Clinic.Controllers
         [HttpGet("seeAvailableDentists")]
         public async Task<IActionResult> GetAvailableDentists()
         {
-            var dentists = await _userService.GetAvailableDentists();
-            
-            return Ok(_mapper.Map<AvailableDentistsResponse>(dentists));
+            try
+            {
+                var dentists = await _userService.GetAvailableDentists();
+
+                return Ok(_mapper.Map<AvailableDentistsResponse>(dentists));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
         }
 
         [HttpPost("seeAvailableSlots")]
         public async Task<IActionResult> GetAvailableSlots(GetFreeSlotsRequest request)
         {
-            var slots = await _appointmentService.GetAvailableTimeSlots(request.DentistId, request.StartDate, request.EndDate);
+            try
+            {
+                var slots = await _appointmentService.GetAvailableTimeSlots(request.DentistId, request.StartDate, request.EndDate);
 
-            return Ok(slots);
+                return Ok(slots);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
         }
 
         [Authorize]
         [HttpPost("bookAppointment")]
         public async Task<IActionResult> BookAppointment(BookAppointmentRequest request)
         {
-            var user = User.FindFirstValue(ClaimTypes.Actor);
-            var userId = Int32.Parse(user);
-            var currentUser = await _userService.GetUserByIdAsync(userId);
-            if (currentUser == null)
+            try
             {
-                return NotFound("User not found.");
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
+                var currentUser = await _userService.GetUserByIdAsync(userId);
+                if (currentUser == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var booked_appointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, request.StartDate);
+
+                var reminder = new ReminderDto
+                {
+                    AppointmentId = booked_appointment.Id,
+                    Type = ReminderType.Email,
+                    Status = ReminderStatus.Pending,
+                    Timezone = "Pacific Standard Time",
+                    SendAt = request.StartDate.AddHours(-1),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    Appointment = booked_appointment
+                };
+
+                await _reminderService.CreateReminderAsync(reminder);
+                var emailDto = new EmailDto
+                {
+                    DentistId = request.DentistId,
+                    ClinicId = request.ClinicId,
+                    ServiceId = request.ServiceId,
+                    StartTime = request.StartDate,
+                    To = currentUser.Email,
+                    Status = Enums.AppointmentStatus.Pending
+
+                };
+                _emailService.SendEmail(emailDto);
+                return Ok();
             }
-            
-            var booked_appointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, request.StartDate);
-            
-            var reminder = new ReminderDto
+            catch (Exception ex)
             {
-                AppointmentId = booked_appointment.Id,
-                Type = ReminderType.Email, 
-                Status = ReminderStatus.Pending,
-                Timezone = "Pacific Standard Time",
-                SendAt = request.StartDate.AddHours(-1),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                Appointment = booked_appointment
-            };
-
-            await _reminderService.CreateReminderAsync(reminder);
-            var emailDto = new EmailDto
-            {
-                DentistId = request.DentistId,
-                ClinicId = request.ClinicId,
-                ServiceId = request.ServiceId,
-                StartTime = request.StartDate,
-                To = currentUser.Email,
-                Status = Enums.AppointmentStatus.Pending
-
-            };
-            _emailService.SendEmail(emailDto);
-            return Ok();
+                return ErrorResponse.GetErrorResponse(ex);
+            }
         }
 
         [Authorize]
         [HttpPost("updateAppointment")]
         public async Task<IActionResult> UpdateAppointment(UpdateAppointmentRequest request)
         {
-            var user = User.FindFirstValue(ClaimTypes.Actor);
-            var userId = Int32.Parse(user);
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
 
-            await _appointmentService.UpdateAppointment(userId, request.AppointmentId, request.NewDate);
-            return Ok();
+                await _appointmentService.UpdateAppointment(userId, request.AppointmentId, request.NewDate);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
         }
 
         [Authorize]
         [HttpGet("seeMyAppointments")]
         public async Task<IActionResult> SeeMyAppointments()
         {
-            var user = User.FindFirstValue(ClaimTypes.Actor);
-            var userId = Int32.Parse(user);
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
 
-            var appointments = await _appointmentService.GetMyAppointments(userId);
+                var appointments = await _appointmentService.GetMyAppointments(userId);
 
-            return Ok(_mapper.Map<List<AppointmentViewModel>>(appointments));
+                return Ok(_mapper.Map<List<AppointmentViewModel>>(appointments));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
         }
 
         [Authorize]
         [HttpPost("cancelAppointment")]
         public async Task<IActionResult> CancelAppointment(CancelAppointmentRequest request)
         {
-            var user = User.FindFirstValue(ClaimTypes.Actor);
-            var userId = Int32.Parse(user);
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
 
-            await _appointmentService.CancelAppointment(userId, request.AppointmentId);
-            return Ok();
+                await _appointmentService.CancelAppointment(userId, request.AppointmentId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
         }
 
     }
