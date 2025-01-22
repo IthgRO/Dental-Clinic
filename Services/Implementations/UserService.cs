@@ -167,5 +167,22 @@ namespace Services.Implementations
                 })
                 .FirstOrDefaultAsync();
         }
+
+        public async Task UpdateUserInformation(int userId, string email, string phone)
+        {
+            var userFromDb = await _db.Users
+                .Where(x => x.Id == userId)
+                .FirstOrDefaultAsync();
+
+            if (userFromDb == null)
+            {
+                throw new Exception("User could not be found!");
+            }
+
+            userFromDb.Email = email;
+            userFromDb.Phone = phone;
+
+            await _db.SaveChangesAsync();
+        }
     }
 }

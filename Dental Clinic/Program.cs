@@ -2,10 +2,8 @@ using Dental_Clinic.StartupExtensions;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
-using Infrastructure;
-using Services.Interfaces;
 using Services.Implementations;
+using Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

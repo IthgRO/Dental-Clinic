@@ -12,5 +12,7 @@ namespace Services.Interfaces
         public Task<DentistListDto> GetAvailableDentists();
 
         Task<UserDto?> GetUserByIdAsync(int userId);
+
+        public Task UpdateUserInformation(int userId, string email, string phone);
     }
 }
