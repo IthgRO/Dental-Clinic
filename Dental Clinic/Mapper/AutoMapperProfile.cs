@@ -61,7 +61,12 @@ namespace Dental_Clinic.Mapper
 
             CreateMap<Services.Models.Reservation.AppointmentDto, AppointmentViewModel>()
                 .ReverseMap();
+
+            CreateMap<DentistAppointmentDto, DentistAppointmentViewModel>()
+                .ReverseMap();
             #endregion
+
+            
         }
     }
 }

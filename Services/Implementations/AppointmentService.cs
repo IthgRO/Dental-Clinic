@@ -3,6 +3,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Models.Reservation;
+using System.ComponentModel.DataAnnotations;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Services.Implementations
@@ -124,6 +125,7 @@ namespace Services.Implementations
             return appointments.Select(x => new Models.Reservation.AppointmentDto
             {
                 Id = x.Id,
+                DentistId = x.DentistId,
                 ClinicName = x.Clinic.Name,
                 City = x.Clinic.City,
                 DentistFirstName = x.Dentist.FirstName,
@@ -210,6 +212,29 @@ namespace Services.Implementations
             );
 
             return updatedDateTime;
+        }
+
+        public async Task<List<DentistAppointmentDto>> GetDentistAppointments(int dentistId)
+        {
+            await ValidateIfUserIsDentist(dentistId);
+
+            var appointmentsFromDb = await (from appt in _db.Appointments
+                                            join user in _db.Users
+                                            on appt.PatientId equals user.Id
+                                            join service in _db.Services
+                                            on appt.ServiceId equals service.Id
+                                            where appt.DentistId == dentistId
+                                            && appt.Status != Dental_Clinic.Enums.AppointmentStatus.Cancelled
+                                            select new DentistAppointmentDto
+                                            {
+                                                Id = appt.Id,
+                                                FirstName = user.FirstName,
+                                                LastName = user.LastName,
+                                                ServiceName = service.Name, 
+                                                StartTime = appt.StartTime,
+                                                EndTime = appt.EndTime,
+                                            }).ToListAsync();
+            return appointmentsFromDb;
         }
     }
 }

@@ -149,6 +149,25 @@ namespace Dental_Clinic.Controllers
         }
 
         [Authorize]
+        [HttpGet("seeDentistsAppointments")]
+        public async Task<IActionResult> SeeDentistAppointments()
+        {
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
+
+                var appointments = await _appointmentService.GetDentistAppointments(userId);
+
+                return Ok(_mapper.Map<List<DentistAppointmentViewModel>>(appointments));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
+
+        [Authorize]
         [HttpPost("cancelAppointment")]
         public async Task<IActionResult> CancelAppointment(CancelAppointmentRequest request)
         {

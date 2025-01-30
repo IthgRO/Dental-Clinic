@@ -10,6 +10,8 @@ namespace Services.Interfaces
 
         public Task<List<AppointmentDto>> GetMyAppointments(int userId);
 
+        public Task<List<DentistAppointmentDto>> GetDentistAppointments(int dentistId);
+
         public Task CancelAppointment(int userId, int appointmentId);
 
         public Task UpdateAppointment(int userId, int appointmentId, DateTime newDate);

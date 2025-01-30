@@ -3,6 +3,7 @@
     public class AppointmentViewModel
     {
         public int Id { get; set; }
+        public int DentistId {  get; set; }
         public required string DentistFirstName { get; set; }
         public required string DentistLastName { get; set; }
         public required string ClinicName {  get; set; }
