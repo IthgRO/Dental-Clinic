@@ -23,6 +23,8 @@ namespace Infrastructure
 
         public DbSet<PasswordChangeAttempt> PasswordChangeAttempts { get; set; }
 
+        public DbSet<DoctorLoginAttemptDto> DoctorLoginAttempts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserDto>()
