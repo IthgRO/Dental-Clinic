@@ -2,8 +2,10 @@
 using Dental_Clinic.Dtos;
 using Dental_Clinic.Enums;
 using Dental_Clinic.Requests.Appointment;
+using Dental_Clinic.Requests.Dentist;
 using Dental_Clinic.Responses.Appointment;
 using Dental_Clinic.Responses.Dentist;
+using Dental_Clinic.Responses.User;
 using Dental_Clinic.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -185,5 +187,34 @@ namespace Dental_Clinic.Controllers
             }
         }
 
+        [HttpPost("sendDoctorLoginCode")]
+        public async Task<IActionResult> SendDoctorLoginCode(SendLoginCodeRequest request)
+        {
+            try
+            {
+                var code = await _userService.GetLoginCode(request.Email, request.Password);
+                _emailService.SendLoginCode(code);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
+
+        [HttpPost("loginWithCode")]
+        public async Task<IActionResult> LoginWithCode(LoginWithCodeRequest request)
+        {
+            try
+            {
+                var result = await _userService.LoginWithCode(request.Email, request.Password, request.Code);
+                return Ok(_mapper.Map<LoginResponse>(result));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
     }
 }

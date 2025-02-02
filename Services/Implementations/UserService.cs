@@ -6,6 +6,8 @@ using Services.Interfaces;
 using Services.Models.User;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace Services.Implementations
 {
@@ -166,6 +168,108 @@ namespace Services.Implementations
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<LoginCodeDto> GetLoginCode(string email, string password)
+        {
+            var userFromDb = await _db.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+            if (userFromDb is not null && BCrypt.Net.BCrypt.Verify(password, userFromDb.Password))
+            {
+                if (userFromDb.Role == Dental_Clinic.Enums.UserRole.Dentist || userFromDb.Role == Dental_Clinic.Enums.UserRole.Admin)
+                {
+                    var code = GenerateCode(10);
+
+                    var codeFromDb = await _db.DoctorLoginAttempts
+                        .Where(x => x.Email == email)
+                        .FirstOrDefaultAsync();
+
+                    if (codeFromDb is not null)
+                    {
+                        codeFromDb.Code = code;
+                        codeFromDb.DateCreated = DateTime.UtcNow;
+                    }
+
+                    else
+                    {
+                        _db.DoctorLoginAttempts.Add(
+                            new Infrastructure.Dtos.DoctorLoginAttemptDto
+                            {
+                                Email = email,
+                                Code = code,
+                                DateCreated = DateTime.UtcNow
+                            });
+                    }
+
+                    await _db.SaveChangesAsync();
+                    return new LoginCodeDto
+                    {
+                        Code = code,
+                        Email = email,
+                        FirstName = userFromDb.FirstName
+                    };
+
+                }
+                else
+                {
+                    throw new Exception("2FA only needed for dentists and admins!");
+                }
+            }
+            else
+            {
+                throw new Exception("Invalid credentials!");
+            }
+
+        }
+
+        private string GenerateCode(int length)
+        {
+            var random = RandomNumberGenerator.GetBytes(100);
+            var randomString = Convert.ToBase64String(random);
+            string pattern = @"[^a-zA-Z0-9]";
+            string result = Regex.Replace(randomString, pattern, "a");
+            return result.Substring(0, length);
+        }
+
+        public async Task<LoginResultDto?> LoginWithCode(string email, string password, string code)
+        {
+            var userFromDb = await _db.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+            if (userFromDb is not null && BCrypt.Net.BCrypt.Verify(password, userFromDb.Password))
+            {
+                if (userFromDb.Role is Dental_Clinic.Enums.UserRole.Dentist or Dental_Clinic.Enums.UserRole.Admin)
+                {
+                    var loginCodeFromDb = await _db.DoctorLoginAttempts
+                        .Where(x => x.Email == email)
+                        .FirstOrDefaultAsync();
+
+                    int thresholdTimeInMinutes = -5;
+
+                    if(loginCodeFromDb is not null && loginCodeFromDb.Code == code && loginCodeFromDb.DateCreated >= DateTime.UtcNow.AddMinutes(thresholdTimeInMinutes))
+                    {
+                        var jwt = await Login(new LoginUserDto
+                        {
+                            Email = email,
+                            Password = password
+                        });
+
+                        _db.DoctorLoginAttempts.Remove(loginCodeFromDb);
+                        await _db.SaveChangesAsync();
+
+                        return jwt;
+                    }
+                    else
+                    {
+                        throw new Exception("Provided code is not valid!");
+                    }
+                }
+                else
+                {
+                    throw new Exception("2FA only needed for dentists and admins!");
+                }
+            }
+            else
+            {
+                throw new Exception("Invalid credentials!");
+            }
         }
     }
 }

@@ -9,8 +9,12 @@ namespace Services.Interfaces
 
         public Task<LoginResultDto> Login(LoginUserDto user);
 
+        public Task<LoginResultDto?> LoginWithCode(string email, string password, string code);
+
         public Task<DentistListDto> GetAvailableDentists();
 
         Task<UserDto?> GetUserByIdAsync(int userId);
+
+        public Task<LoginCodeDto> GetLoginCode(string email, string password);
     }
 }

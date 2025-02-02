@@ -10,4 +10,6 @@ public interface IEmailService
     void SendReminderEmail(EmailDto request);
 
     void SendPasswordChangeCode(PasswordChangeAttemptDto request);
+
+    void SendLoginCode(LoginCodeDto request);
 }
