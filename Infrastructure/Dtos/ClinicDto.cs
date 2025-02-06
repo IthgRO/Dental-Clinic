@@ -1,5 +1,7 @@
 namespace Dental_Clinic.Dtos;
 using System.ComponentModel.DataAnnotations;
+using Dental_Clinic.Enums;
+
 public class ClinicDto
 {
     public int Id { get; init; }
@@ -18,7 +20,7 @@ public class ClinicDto
     public required string Country { get; init; }
 
     [StringLength(50)]
-    public required string Timezone { get; init; }
+    public required ClinicTimezone Timezone { get; init; }
 
     [Phone]
     [StringLength(20)]
