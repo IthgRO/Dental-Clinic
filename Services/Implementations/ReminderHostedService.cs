@@ -17,6 +17,24 @@ public class ReminderHostedService : BackgroundService
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
+    private DateTime ConvertUtcToLocal(DateTime utcTime, string timezoneId)
+{
+    try
+    {
+        var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
+        return TimeZoneInfo.ConvertTimeFromUtc(utcTime, timeZoneInfo);
+    }
+    catch (TimeZoneNotFoundException)
+    {
+        _logger.LogError($"Timezone {timezoneId} not found. Using UTC instead.");
+        return utcTime; // Fallback to UTC if timezone is not found
+    }
+    catch (InvalidTimeZoneException)
+    {
+        _logger.LogError($"Invalid timezone format: {timezoneId}. Using UTC instead.");
+        return utcTime; // Fallback to UTC if the format is invalid
+    }
+}
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -41,10 +59,11 @@ public class ReminderHostedService : BackgroundService
                             .Where(u => u.Id == reminder.Appointment.PatientId)
                             .Select(u => u.Email)
                             .FirstOrDefaultAsync();
+                        var localStartTime = ConvertUtcToLocal(reminder.Appointment.StartTime, reminder.Appointment.Timezone);
                         var email = new EmailDto
                         {
                             To = patientEmail,
-                            StartTime = reminder.Appointment.StartTime,
+                            StartTime = localStartTime,
                             ClinicId = reminder.Appointment.ClinicId,
                             ServiceId = reminder.Appointment.ServiceId,
                             DentistId = reminder.Appointment.DentistId,

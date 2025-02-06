@@ -11,9 +11,11 @@ namespace Services.Implementations
     public class AppointmentService : IAppointmentService
     {
         private ApplicationContext _db;
-        public AppointmentService(ApplicationContext db)
+        private readonly IClinicService _clinicService;
+        public AppointmentService(ApplicationContext db, IClinicService clinicService)
         {
             _db = db;
+            _clinicService = clinicService;
         }
         public async Task<List<FreeSlot>> GetAvailableTimeSlots(int dentistId, DateTime startDate, DateTime endDate)
         {
@@ -65,15 +67,24 @@ namespace Services.Implementations
 
             await ValidateIfDentistIsFree(dentistId, startDate);
 
+            var clinic = await _db.Clinics.FirstOrDefaultAsync(c => c.Id == clinicId);
+            if (clinic == null)
+            {
+                throw new Exception("Clinic not found.");
+            }
+            // Convert StartTime to UTC
+            var clinicTimeZoneId = _clinicService.ConvertClinicTimezoneEnumToWindows(clinic.Timezone);
+            var utcStart = _clinicService.ConvertToUtc(clinicId, startDate);
+
             var newAppointment = new Dental_Clinic.Dtos.AppointmentDto
             {
                 ClinicId = clinicId,
                 DentistId = dentistId,
                 PatientId = userId,
                 ServiceId = serviceId,
-                StartTime = startDate,
-                EndTime = startDate.AddHours(1),
-                Timezone = "",
+                StartTime = utcStart, // Store the time in UTC
+                EndTime = utcStart.AddHours(1),
+                Timezone = clinicTimeZoneId,
                 Status = AppointmentStatus.Pending,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
