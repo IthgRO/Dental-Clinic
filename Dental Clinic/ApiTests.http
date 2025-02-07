@@ -1,19 +1,43 @@
+### Request #1
+POST http://localhost:5282/api/user/register
+Content-Type: application/json
+
+{
+    "email": "badboyyeetanator@gmail.com",
+    "firstName": "bad",
+    "lastName": "boy",
+    "phone": "+40727992327",
+    "password": "SecurePass1",
+    "role": "Patient",
+    "timezone": "Eastern Standard Time"
+}
+
+### Request #2
+POST http://localhost:5282/api/user/login
+Content-Type: application/json
+
+{
+    "email": "badboyyeetanator@gmail.com",
+    "password": "SecurePass1"
+}
+
+### Request #3
 POST http://localhost:5282/api/dentist/bookAppointment
 Content-Type: application/json
-Authorization: Bearer abdivbeiuvbiaubviubviwnvjwnviubwnifbwuybvuwbfubvuebvuybwbfbfgwevgyv4354366erbvuwybvyuwbvueybve
+Authorization: Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA5LzA5L2lkZW50aXR5L2NsYWltcy9hY3RvciI6IjQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQYXRpZW50IiwiZXhwIjoxNzcwMjEwMzY2fQ.3Lsh_7GUyZLCOfs-zusdLjNz2RPDubomkP7T4RlicsqY6kBmmAWkso9ci5LxA8q-JbRJf0wewEb2iyGqp1vV5w
 
-
-    {
-    "to": "everett.vandervort@ethereal.email",
+{
+    "to": "badboyyeetanator@gmail.com",
     "subject": "Appointment Confirmation",
     "body": "Your appointment is scheduled for the specified date and time.",
-    "startTime": "2024-12-10T09:00:00",
-    "clinicId": 1,
-    "serviceId": 4,
-    "dentistId": 9,
-    "timeZone": "Pacific Standard Time"
-    }
+    "startDate": "2025-02-10T12:20:00",
+    "clinicId":  5,
+    "serviceId": 1,
+    "dentistId": 5,
+    "timeZone": "Eastern European Time"
+}
 
+### Request #4
 POST https://dentalbackend.azurewebsites.net/api/dentist/bookAppointment
 Content-Type: application/json
 Cookie: ARRAffinity=86c8e5986fea69b1b779af8bca1ab93a41b31587b3dbd746f80e391e3c8be33f; ARRAffinitySameSite=86c8e5986fea69b1b779af8bca1ab93a41b31587b3dbd746f80e391e3c8be33f
