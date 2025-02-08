@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dental_Clinic.Dtos;
+using Dental_Clinic.Requests.Service;
 using Dental_Clinic.Requests.User;
 using Dental_Clinic.Responses.Appointment;
 using Dental_Clinic.Responses.Clinic;
@@ -7,6 +8,7 @@ using Dental_Clinic.Responses.Dentist;
 using Dental_Clinic.Responses.Service;
 using Dental_Clinic.Responses.User;
 using Services.Models.Reservation;
+using Services.Models.Service;
 using Services.Models.User;
 
 namespace Dental_Clinic.Mapper
@@ -37,7 +39,16 @@ namespace Dental_Clinic.Mapper
 
             #region Service
 
-            CreateMap<ServiceDto, ServiceViewModel>()
+            CreateMap<Services.Models.Service.ServiceDto, ServiceViewModel>()
+                .ReverseMap();
+
+            CreateMap<AddServiceToDentistRequest, AvailableServiceViewModel>()
+                .ReverseMap();
+
+            CreateMap<AddServiceToDentistRequest, Services.Models.Service.ServiceDto>()
+                .ReverseMap();
+
+            CreateMap<DentistServiceViewModel, Services.Models.Service.ServiceDto>()
                 .ReverseMap();
 
             #endregion
