@@ -1,4 +1,5 @@
-﻿using Dental_Clinic.Requests.User;
+﻿using Dental_Clinic.Requests.Service;
+using Dental_Clinic.Requests.User;
 using FluentValidation;
 using Services.Implementations;
 using Services.Interfaces;
@@ -18,6 +19,7 @@ namespace Dental_Clinic.StartupExtensions
             services.AddScoped<IServiceService, ServiceService>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IValidator<RegisterUserRequest>, RegisterUserRequestAbstractValidator>();
+            services.AddScoped<IValidator<AddServiceToDentistRequest>, AddServiceToDentistRequestAbstractValidator>();
 
             return services;
         }
