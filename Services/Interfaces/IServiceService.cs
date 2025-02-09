@@ -9,4 +9,6 @@ public interface IServiceService
     public Task AddServiceToDentist(ServiceDto serviceDto);
 
     public Task<IEnumerable<ServiceDto>> GetServicesForDentist(int dentistId);
+
+    public Task UpdateServicesForDentist(List<ServiceDto> services, int dentistId);
 }

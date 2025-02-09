@@ -78,5 +78,25 @@ namespace Dental_Clinic.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost("updateDentistServices")]
+        public async Task<IActionResult> UpdateDentistServices(List<AddServiceToDentistRequest> services)
+        {
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
+
+                ServiceUtils.VerifyIfListOfServicesIsApproved(_mapper.Map<List<AvailableServiceViewModel>>(services));
+
+                await _serviceService.UpdateServicesForDentist(_mapper.Map<List<ServiceDto>>(services), userId);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
     }
 }

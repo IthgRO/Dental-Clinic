@@ -23,7 +23,6 @@ public class ServiceService : IServiceService
             Name = serviceDto.Name,
             Currency = "",
             Category = serviceDto.Category,
-            CreatedAt = DateTime.UtcNow,
             Description = "",
             Duration = serviceDto.Duration,
         };
@@ -52,6 +51,31 @@ public class ServiceService : IServiceService
             Duration = x.Duration,
             DentistId = dentistId
         });
+    }
+
+    public async Task UpdateServicesForDentist(List<ServiceDto> services, int dentistId)
+    {
+        await ValidateDentist(dentistId);
+
+        var servicesFromDb = await _context.Services
+            .Where(x => x.UserId == dentistId)
+            .ToListAsync();
+
+        _context.Services.RemoveRange(servicesFromDb);
+
+        foreach (var service in services)
+        {
+            _context.Services.Add(new Dental_Clinic.Dtos.ServiceDto
+            {
+                Category = service.Category,
+                Name = service.Name,
+                Duration = service.Duration,
+                UserId = dentistId,
+                Currency = "",
+                Description = "",
+            });
+        }
+        await _context.SaveChangesAsync();
     }
 
     private async Task ValidateDentist(int dentistId)

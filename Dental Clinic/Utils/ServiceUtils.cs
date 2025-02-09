@@ -43,5 +43,13 @@ namespace Dental_Clinic.Utils
                 throw new Exception("This service is not approved yet!");
             }
         }
+
+        public static void VerifyIfListOfServicesIsApproved(List<AvailableServiceViewModel> services)
+        {
+            foreach (AvailableServiceViewModel service in services)
+            {
+                VerifyIfServiceIsApproved(service);
+            }
+        }
     }
 }
