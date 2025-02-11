@@ -21,6 +21,6 @@ namespace Dental_Clinic.Responses.Dentist
 
         public ClinicViewModel? Clinic { get; set; }
 
-        public List<ServiceViewModel>? Services { get; set; }
+        public List<ServiceViewModel>? Services { get; set; } = [];
     }
 }

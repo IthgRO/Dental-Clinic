@@ -51,6 +51,9 @@ namespace Dental_Clinic.Mapper
             CreateMap<DentistServiceViewModel, Services.Models.Service.ServiceDto>()
                 .ReverseMap();
 
+            CreateMap<ServiceViewModel, Dtos.ServiceDto>()
+                .ReverseMap();
+
             #endregion
 
 

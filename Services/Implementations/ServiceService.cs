@@ -25,6 +25,8 @@ public class ServiceService : IServiceService
             Category = serviceDto.Category,
             Description = "",
             Duration = serviceDto.Duration,
+            Price = 0,
+            IsActive = true,
         };
 
         _context.Services.Add(newService);
@@ -73,6 +75,8 @@ public class ServiceService : IServiceService
                 UserId = dentistId,
                 Currency = "",
                 Description = "",
+                Price = 0,
+                IsActive = true,
             });
         }
         await _context.SaveChangesAsync();
