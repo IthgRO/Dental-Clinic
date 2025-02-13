@@ -1,5 +1,6 @@
 ﻿using Dental_Clinic.Dtos;
 using Services.Models.User;
+using Dental_Clinic.Enums;
 
 namespace Services.Interfaces
 {
@@ -16,5 +17,7 @@ namespace Services.Interfaces
         Task<UserDto?> GetUserByIdAsync(int userId);
 
         public Task<LoginCodeDto> GetLoginCode(string email, string password);
+
+        ReminderType GetUserReminderType(int userId);
     }
 }

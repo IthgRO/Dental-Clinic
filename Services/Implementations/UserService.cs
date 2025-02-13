@@ -1,4 +1,5 @@
 ﻿using Dental_Clinic.Dtos;
+using Dental_Clinic.Enums;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -94,6 +95,15 @@ namespace Services.Implementations
                 .ToListAsync();
 
             return new DentistListDto { Dentists = dentists };
+        }
+        public ReminderType GetUserReminderType(int userId)
+        {
+            var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                throw new Exception($"User with ID {userId} not found.");
+            }
+            return user.ReminderType;
         }
         public async Task<UserDto?> GetUserByIdAsync(int userId)
         {
