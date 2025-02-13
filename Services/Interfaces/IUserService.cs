@@ -1,4 +1,5 @@
 ﻿using Dental_Clinic.Dtos;
+using Dental_Clinic.Enums;
 using Services.Models.User;
 
 namespace Services.Interfaces
@@ -12,5 +13,6 @@ namespace Services.Interfaces
         public Task<DentistListDto> GetAvailableDentists();
 
         Task<UserDto?> GetUserByIdAsync(int userId);
+        ReminderType GetUserReminderType(int userId);
     }
 }

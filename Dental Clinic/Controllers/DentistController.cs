@@ -23,14 +23,18 @@ namespace Dental_Clinic.Controllers
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
         private readonly IReminderService _reminderService;
+        private readonly IClinicService _clinicService;
+        private readonly ISmsService _smsService;
 
-        public DentistController(IUserService userService, IAppointmentService appointmentService, IEmailService emailService, IReminderService reminderService, IMapper mapper)
+        public DentistController(IUserService userService, ISmsService smsService, IAppointmentService appointmentService, IEmailService emailService, IReminderService reminderService, IMapper mapper, IClinicService clinicService)
         {
             _userService = userService;
             _emailService = emailService;
             _appointmentService = appointmentService;
             _mapper = mapper;
             _reminderService = reminderService;
+            _clinicService = clinicService;
+            _smsService = smsService;
         }
 
         [HttpGet("seeAvailableDentists")]
@@ -77,15 +81,24 @@ namespace Dental_Clinic.Controllers
                     return NotFound("User not found.");
                 }
 
-                var booked_appointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, request.StartDate);
+                var clinic = await _clinicService.GetClinicByIdAsync(request.ClinicId);
+                if (clinic == null)
+                {
+                    return NotFound("Clinic not found.");
+                }
 
+                // Convert StartDate (Clinic's Local Time) to UTC
+                var startDateUtc = _clinicService.ConvertToUtc(request.ClinicId, request.StartDate);
+
+                var booked_appointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, startDateUtc);
+                var reminderType = _userService.GetUserReminderType(userId);
                 var reminder = new ReminderDto
                 {
                     AppointmentId = booked_appointment.Id,
-                    Type = ReminderType.Email,
+                    Type = reminderType,
                     Status = ReminderStatus.Pending,
-                    Timezone = "Pacific Standard Time",
-                    SendAt = request.StartDate.AddHours(-1),
+                    Timezone = _clinicService.ConvertClinicTimezoneEnumToWindows(clinic.Timezone),
+                    SendAt = startDateUtc.AddHours(-1),
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     Appointment = booked_appointment
@@ -103,7 +116,18 @@ namespace Dental_Clinic.Controllers
 
                 };
                 _emailService.SendEmail(emailDto);
-                return Ok();
+                var smsDto = new SmsDto
+                {
+                    To = currentUser.Phone,
+                    StartTime = request.StartDate,
+                    ClinicId = request.ClinicId,
+                    ServiceId = request.ServiceId,
+                    DentistId = request.DentistId,
+                    Status = AppointmentStatus.Pending
+                };
+
+                _smsService.SendSms(smsDto);
+                    return Ok();
             }
             catch (Exception ex)
             {

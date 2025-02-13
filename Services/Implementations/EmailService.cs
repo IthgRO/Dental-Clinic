@@ -25,7 +25,7 @@ public class EmailService: IEmailService
         var clinicName = _clinicService.GetClinicNameById(request.ClinicId);
         var serviceName = _serviceService.GetServiceNameById(request.ServiceId);
         var dentistName = _dentistService.GetDentistNameById(request.DentistId);
-        var formattedStartTime = request.StartTime.ToString("dd") + GetDaySuffix(request.StartTime.Day) +
+        var formattedStartTime = request.StartTime.Day.ToString() + GetDaySuffix(request.StartTime.Day) +
                          " of " + request.StartTime.ToString("MMMM h:mm tt");
         var email = new MimeMessage();
         email.From.Add(MailboxAddress.Parse(_config.GetSection("EmailUserName").Value));
@@ -90,7 +90,7 @@ public class EmailService: IEmailService
         var clinicName = _clinicService.GetClinicNameById(request.ClinicId);
         var serviceName = _serviceService.GetServiceNameById(request.ServiceId);
         var dentistName = _dentistService.GetDentistNameById(request.DentistId);
-        var formattedStartTime = request.StartTime.ToString("dd") + GetDaySuffix(request.StartTime.Day) +
+        var formattedStartTime = request.StartTime.Day.ToString() + GetDaySuffix(request.StartTime.Day) +
                          " of " + request.StartTime.ToString("MMMM h:mm tt");
         var email = new MimeMessage();
         email.From.Add(MailboxAddress.Parse(_config.GetSection("EmailUserName").Value));

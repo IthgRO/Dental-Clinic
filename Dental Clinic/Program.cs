@@ -9,7 +9,9 @@ using Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = "Server=tcp:itgh.database.windows.net,1433;Initial Catalog=DentalSolutionDb;Persist Security Info=False;User ID=indridiGG;Password=icelandPower33;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+var connectionString = "Server=(local)\\SQLEXPRESS;Database=DentalSolutionLocalDb;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+
+//var connectionString = "Server=tcp:itgh.database.windows.net,1433;Initial Catalog=DentalSolutionDb;Persist Security Info=False;User ID=indridiGG;Password=icelandPower33;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 var jwt_secret = "abdivbeiuvbiaubviubviwnvjwnviubwnifbwuybvuwbfubvuebvuybwbfbfgwevgyv4354366erbvuwybvyuwbvueybve";
 
 builder.Services.AddDataAccess(connectionString);
@@ -26,6 +28,9 @@ builder.Services.AddHostedService<ReminderHostedService>();
 builder.Services.AddScoped<IReminderService, ReminderService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IClinicService, ClinicService>();
+builder.Services.AddScoped<ISmsService, SmsService>();
+
 
 builder.Services.AddSwaggerGen();
 
