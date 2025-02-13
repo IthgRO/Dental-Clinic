@@ -7,6 +7,7 @@ using Dental_Clinic.Responses.Clinic;
 using Dental_Clinic.Responses.Dentist;
 using Dental_Clinic.Responses.Service;
 using Dental_Clinic.Responses.User;
+using Services.Models.Clinic;
 using Services.Models.Reservation;
 using Services.Models.Service;
 using Services.Models.User;
@@ -80,7 +81,14 @@ namespace Dental_Clinic.Mapper
                 .ReverseMap();
             #endregion
 
-            
+            #region Clinic
+
+            CreateMap<Clinic, DentistClinicViewModel>()
+                .ReverseMap();
+
+            #endregion
+
+
         }
     }
 }
