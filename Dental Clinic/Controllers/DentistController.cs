@@ -93,11 +93,11 @@ namespace Dental_Clinic.Controllers
                 var startDateUtc = _clinicService.ConvertToUtc(request.ClinicId, request.StartDate);
 
                 var booked_appointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, startDateUtc);
-
+                var reminderType = _userService.GetUserReminderType(userId);
                 var reminder = new ReminderDto
                 {
                     AppointmentId = booked_appointment.Id,
-                    Type = ReminderType.Email,
+                    Type = reminderType,
                     Status = ReminderStatus.Pending,
                     Timezone = _clinicService.ConvertClinicTimezoneEnumToWindows(clinic.Timezone),
                     SendAt = startDateUtc.AddHours(-1),

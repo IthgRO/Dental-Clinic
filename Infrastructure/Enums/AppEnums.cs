@@ -21,7 +21,8 @@ public enum DaysOfWeek
     public enum ReminderType
     {
         SMS,
-        Email
+        Email,
+        Both
     }
 
     public enum AppointmentStatus
@@ -45,7 +46,6 @@ public enum DaysOfWeek
         Sent,
         Failed
     }
-
 public enum ClinicTimezone
 {
     // North America

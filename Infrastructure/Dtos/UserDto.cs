@@ -43,4 +43,5 @@ public class UserDto
     public ICollection<ServiceDto> Services { get; set; } = new List<ServiceDto>();
 
     public ICollection<AppointmentDto> Appointments { get; set; } = new List<AppointmentDto>();
+    public ReminderType ReminderType { get; set; } = ReminderType.Both;
 }
