@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Dental_Clinic.Requests.Clinic;
 using Dental_Clinic.Responses.Clinic;
 using Dental_Clinic.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +35,25 @@ namespace Dental_Clinic.Controllers
 
                 return Ok(_mapper.Map<DentistClinicViewModel>(clinic));
 
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("updateClinicAddress")]
+        public async Task<IActionResult> UpdateClinicddress(UpdateClinicAddressRequest request)
+        {
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
+
+                await _clinicService.UpdateClinicAddress(userId, request.Address);
+
+                return Ok();
             }
             catch (Exception ex)
             {
