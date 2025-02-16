@@ -60,5 +60,22 @@ namespace Dental_Clinic.Controllers
                 return ErrorResponse.GetErrorResponse(ex);
             }
         }
+
+        [Authorize]
+        [HttpPost("uploadClinicPicture")]
+        public async Task<IActionResult> UpdateClinicPicture()
+        {
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
     }
 }

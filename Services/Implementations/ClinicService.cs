@@ -5,6 +5,7 @@ using System;
 using Dental_Clinic.Enums;
 using Microsoft.Extensions.Logging;
 using Services.Models.Clinic;
+using Microsoft.IdentityModel.Tokens;
 
 
 public class ClinicService : IClinicService
@@ -142,5 +143,23 @@ public class ClinicService : IClinicService
         {
             throw new Exception("This user is not associated with a clinic!");
         }
+    }
+
+    public async Task UpdateClinicAddress(int dentistId, string address)
+    {
+        var dentistFromDb = await _context.Users
+            .Include(x => x.Clinic)
+            .Where(x => x.Id == dentistId)
+            .FirstOrDefaultAsync();
+
+        ValidateDentistClinic(dentistFromDb);
+
+        if (address == string.Empty)
+        {
+            throw new Exception("New Address cannot be empty!");
+        }
+
+        dentistFromDb.Clinic.Address = address;
+        await _context.SaveChangesAsync();
     }
 }
