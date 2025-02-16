@@ -36,6 +36,10 @@ public class ClinicDto
 
     public DateTime UpdatedAt { get; set; }
 
+    public byte[]? Picture { get; set; }
+
+    public string? PictureFormat {  get; set; }
+
     public ICollection<UserDto> Users { get; set; } = new List<UserDto>();
 
     public ICollection<AppointmentDto> Appointments { get; set; } = new List<AppointmentDto>();

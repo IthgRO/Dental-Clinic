@@ -162,4 +162,51 @@ public class ClinicService : IClinicService
         dentistFromDb.Clinic.Address = address;
         await _context.SaveChangesAsync();
     }
+
+    public async Task UploadClinicPicture(int dentistId, byte[] picture, string pictureFormat)
+    {
+        var dentistFromDb = await _context.Users
+            .Include(x => x.Clinic)
+            .Where(x => x.Id == dentistId)
+            .FirstOrDefaultAsync();
+
+        ValidateDentistClinic(dentistFromDb);
+
+        if (dentistFromDb.Clinic == null)
+        {
+            throw new Exception("No clinic found for this dentist!");
+        }
+
+        dentistFromDb.Clinic.Picture = picture;
+        dentistFromDb.Clinic.PictureFormat = pictureFormat;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<ClinicPicture> GetClinicPicture(int dentistId)
+    {
+        var dentistFromDb = await _context.Users
+            .Include(x => x.Clinic)
+            .Where(x => x.Id == dentistId)
+            .FirstOrDefaultAsync();
+
+        ValidateDentistClinic(dentistFromDb);
+
+        if (dentistFromDb.Clinic == null)
+        {
+            throw new Exception("No clinic found for this dentist!");
+        }
+
+        if(dentistFromDb.Clinic.Picture == null || dentistFromDb.Clinic.PictureFormat == null)
+        {
+            throw new Exception("Picture of clinic not found!");
+        }
+
+        return new ClinicPicture
+        {
+            Format = dentistFromDb.Clinic.PictureFormat,
+            Picture = dentistFromDb.Clinic.Picture
+        };
+
+    }
 }
