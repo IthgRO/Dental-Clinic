@@ -63,18 +63,57 @@ namespace Dental_Clinic.Controllers
 
         [Authorize]
         [HttpPost("uploadClinicPicture")]
-        public async Task<IActionResult> UpdateClinicPicture()
+        public async Task<IActionResult> UpdateClinicPicture(IFormFile picture)
         {
             try
             {
                 var user = User.FindFirstValue(ClaimTypes.Actor);
                 var userId = Int32.Parse(user);
 
+                ValidatePicture(picture);
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await picture.CopyToAsync(memoryStream);
+
+                    byte[] imageBytes = memoryStream.ToArray();
+
+                    await _clinicService.UploadClinicPicture(userId, imageBytes, picture.ContentType);
+
+                    
+                }
+
                 return Ok();
             }
             catch (Exception ex)
             {
                 return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
+
+        [Authorize, HttpGet("getClinicPicture")]
+        public async Task<IActionResult> GetClinicPicture()
+        {
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
+
+                var picture = await _clinicService.GetClinicPicture(userId);
+
+                return File(picture.Picture, picture.Format);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
+
+        private void ValidatePicture(IFormFile picture)
+        {
+            if (picture == null || picture.Length == 0)
+            {
+                throw new Exception("Picture for clinic not valid!");
             }
         }
     }
