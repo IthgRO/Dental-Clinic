@@ -11,7 +11,7 @@ public class ClinicDto
     public required string Name { get; init; }
 
     [StringLength(200)]
-    public required string Address { get; init; }
+    public required string Address { get; set; }
 
     [StringLength(100)]
     public required string City { get; init; }
