@@ -14,6 +14,8 @@ namespace Services.Interfaces
 
         public Task CancelAppointment(int userId, int appointmentId);
 
+        public Task ConfirmAppointment(int userId, int appointmentId);
+
         public Task UpdateAppointment(int userId, int appointmentId, DateTime newDate);
     }
 }

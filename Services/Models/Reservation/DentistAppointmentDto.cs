@@ -1,4 +1,6 @@
-﻿namespace Services.Models.Reservation
+﻿using Dental_Clinic.Enums;
+
+namespace Services.Models.Reservation
 {
     public class DentistAppointmentDto
     {
@@ -8,5 +10,6 @@
         public required string ServiceName { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public AppointmentStatus Status { get; set; }
     }
 }
