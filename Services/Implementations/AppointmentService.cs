@@ -163,7 +163,7 @@ namespace Services.Implementations
 
             else if (appointmentFromDb.PatientId != userId && appointmentFromDb.DentistId != userId)
             {
-                throw new Exception("Appointment does not belong to this user! ");
+                throw new Exception("User not allowed to cancel this appointment!");
             }
 
             appointmentFromDb.Status = Dental_Clinic.Enums.AppointmentStatus.Cancelled;
@@ -181,9 +181,9 @@ namespace Services.Implementations
                 throw new Exception("Appointment could not be found! ");
             }
 
-            else if (appointmentFromDb.PatientId != userId && appointmentFromDb.DentistId != userId)
+            else if (appointmentFromDb.DentistId != userId)
             {
-                throw new Exception("Appointment does not belong to this user! ");
+                throw new Exception("User not allowed to confirm this appointment!");
             }
 
             appointmentFromDb.Status = Dental_Clinic.Enums.AppointmentStatus.Confirmed;
