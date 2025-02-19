@@ -145,7 +145,8 @@ namespace Services.Implementations
                 Currency = x.Service.Currency,
                 ServicePrice = x.Service.Price,
                 StartTime = x.StartTime,
-                EndTime = x.EndTime
+                EndTime = x.EndTime,
+                Status = x.Status,
             }).ToList();
         }
 
@@ -160,12 +161,32 @@ namespace Services.Implementations
                 throw new Exception("Appointment could not be found! ");
             }
 
-            else if (appointmentFromDb.PatientId != userId)
+            else if (appointmentFromDb.PatientId != userId && appointmentFromDb.DentistId != userId)
             {
-                throw new Exception("Appointment does not belong to this user! ");
+                throw new Exception("User not allowed to cancel this appointment!");
             }
 
             appointmentFromDb.Status = Dental_Clinic.Enums.AppointmentStatus.Cancelled;
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task ConfirmAppointment(int userId, int appointmentId)
+        {
+            var appointmentFromDb = await _db.Appointments
+                .Where(x => x.Id == appointmentId)
+                .FirstOrDefaultAsync();
+
+            if (appointmentFromDb == null)
+            {
+                throw new Exception("Appointment could not be found! ");
+            }
+
+            else if (appointmentFromDb.DentistId != userId)
+            {
+                throw new Exception("User not allowed to confirm this appointment!");
+            }
+
+            appointmentFromDb.Status = Dental_Clinic.Enums.AppointmentStatus.Confirmed;
             await _db.SaveChangesAsync();
         }
 
@@ -244,6 +265,7 @@ namespace Services.Implementations
                                                 ServiceName = service.Name, 
                                                 StartTime = appt.StartTime,
                                                 EndTime = appt.EndTime,
+                                                Status = appt.Status
                                             }).ToListAsync();
             return appointmentsFromDb;
         }

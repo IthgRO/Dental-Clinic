@@ -1,4 +1,6 @@
-﻿namespace Dental_Clinic.Responses.Appointment
+﻿using Dental_Clinic.Enums;
+
+namespace Dental_Clinic.Responses.Appointment
 {
     public class DentistAppointmentViewModel
     {
@@ -8,5 +10,6 @@
         public required string ServiceName { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public AppointmentStatus Status { get; set; }
     }
 }

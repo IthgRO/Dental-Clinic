@@ -211,6 +211,24 @@ namespace Dental_Clinic.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost("confirmAppointment")]
+        public async Task<IActionResult> ConfirmAppointment(ConfirmAppointmentRequest request)
+        {
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
+
+                await _appointmentService.ConfirmAppointment(userId, request.AppointmentId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
+
         [HttpPost("sendDoctorLoginCode")]
         public async Task<IActionResult> SendDoctorLoginCode(SendLoginCodeRequest request)
         {

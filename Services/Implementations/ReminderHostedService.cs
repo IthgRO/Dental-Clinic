@@ -55,7 +55,7 @@ public class ReminderHostedService : BackgroundService
             {
                 try
                 {
-                    if (reminder.Appointment != null && reminder.Appointment.PatientId > 0)
+                    if (reminder.Appointment != null && reminder.Appointment.PatientId > 0 && reminder.Appointment != null && reminder.Appointment.Status == AppointmentStatus.Confirmed)
                     {
                         // Convert the appointment's start time from UTC to local time using the appointment's timezone
                         var localStartTime = ConvertUtcToLocal(reminder.Appointment.StartTime, reminder.Appointment.Timezone);
