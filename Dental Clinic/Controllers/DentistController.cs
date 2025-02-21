@@ -128,8 +128,8 @@ namespace Dental_Clinic.Controllers
                     Status = AppointmentStatus.Pending
                 };
 
-                _smsService.SendSms(smsDto);
-                    return Ok();
+                //_smsService.SendSms(smsDto);
+                return Ok();
             }
             catch (Exception ex)
             {
