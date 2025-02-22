@@ -95,6 +95,7 @@ namespace Services.Implementations
         {
             await ValidateIfUserIsDentist(dentistId);
 
+
             if (startDate.Hour < 9 || startDate.Hour > 17)
             {
                 throw new Exception("Dentist is not working during this time interval!");
@@ -103,6 +104,8 @@ namespace Services.Implementations
             {
                 throw new Exception("The dentist is not working on weekends!");
             }
+
+            startDate = SetToFixHour(startDate);
 
             var clinic = await _db.Clinics.FirstOrDefaultAsync(c => c.Id == clinicId);
             if (clinic == null)
@@ -163,6 +166,7 @@ namespace Services.Implementations
                 .Include(x => x.Service)
                 .ToListAsync();
 
+
             return appointments.Select(x => new Models.Reservation.AppointmentDto
             {
                 Id = x.Id,
@@ -174,8 +178,8 @@ namespace Services.Implementations
                 ServiceName = x.Service.Name,
                 Currency = x.Service.Currency,
                 ServicePrice = x.Service.Price,
-                StartTime = x.StartTime,
-                EndTime = x.EndTime,
+                StartTime = ConvertToLocalFast(x.Clinic.Timezone, x.StartTime),
+                EndTime = ConvertToLocalFast(x.Clinic.Timezone, x.EndTime),
                 Status = x.Status,
             }).ToList();
         }
@@ -312,6 +316,8 @@ namespace Services.Implementations
                                             on appt.PatientId equals user.Id
                                             join service in _db.Services
                                             on appt.ServiceId equals service.Id
+                                            join clinic in _db.Clinics
+                                            on appt.ClinicId equals clinic.Id
                                             where appt.DentistId == dentistId
                                             && appt.Status != Dental_Clinic.Enums.AppointmentStatus.Cancelled
                                             select new DentistAppointmentDto
@@ -319,11 +325,13 @@ namespace Services.Implementations
                                                 Id = appt.Id,
                                                 FirstName = user.FirstName,
                                                 LastName = user.LastName,
-                                                ServiceName = service.Name, 
+                                                ServiceName = service.Name,
                                                 StartTime = appt.StartTime,
-                                                EndTime = appt.EndTime,
-                                                Status = appt.Status
+                                                EndTime =  ConvertToLocalFast(clinic.Timezone, appt.EndTime),
+                                                Status = appt.Status,
+                                                
                                             }).ToListAsync();
+
             return appointmentsFromDb;
         }
 
@@ -345,6 +353,18 @@ namespace Services.Implementations
             var utcTime = TimeZoneInfo.ConvertTimeToUtc(clinicLocalTime, clinicTimeZone);
 
             return utcTime;
+        }
+
+        private DateTime ConvertToLocalFast(ClinicTimezone timezone, DateTime utcTime)
+        {
+
+            var clinicTimeZoneId = _clinicService.ConvertClinicTimezoneEnumToWindows(timezone);
+            var clinicTimeZone = TimeZoneInfo.FindSystemTimeZoneById(clinicTimeZoneId);
+
+            var utcDateTime = DateTime.SpecifyKind(utcTime, DateTimeKind.Utc);
+            var localTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, clinicTimeZone);
+
+            return localTime;
         }
     }
 }
