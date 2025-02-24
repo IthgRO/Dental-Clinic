@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Models.Clinic;
 using Services.Models.Reservation;
+using Dental_Clinic.Dtos;
 
 namespace Services.Implementations
 {
@@ -365,6 +366,22 @@ namespace Services.Implementations
             var localTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, clinicTimeZone);
 
             return localTime;
+        }
+
+        public async Task<Dental_Clinic.Dtos.AppointmentDto> GetAppointmentByIdAsync(int appointmentId)
+        {
+            var appointment = await _db.Appointments
+                .Include(a => a.Clinic)
+                .Include(a => a.Dentist)
+                .Include(a => a.Service)
+                .FirstOrDefaultAsync(a => a.Id == appointmentId);
+
+            if (appointment == null)
+            {
+                throw new Exception("Appointment not found.");
+            }
+
+            return appointment;
         }
     }
 }

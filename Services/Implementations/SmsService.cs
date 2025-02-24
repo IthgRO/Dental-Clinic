@@ -22,7 +22,8 @@ public class SmsService : ISmsService
 
         TwilioClient.Init(
             _config["Twilio:AccountSid"],
-            _config["Twilio:AuthToken"]
+            _config["Twilio:ApiKey"],
+            _config["Twilio:ApiSecret"]
         );
     }
 
