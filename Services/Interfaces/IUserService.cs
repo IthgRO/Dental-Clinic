@@ -19,5 +19,7 @@ namespace Services.Interfaces
         public Task<LoginCodeDto> GetLoginCode(string email, string password);
 
         ReminderType GetUserReminderType(int userId);
+
+        public Task ValidateAdminForSeeingDentistAppointmets(int adminId, int dentistId);
     }
 }

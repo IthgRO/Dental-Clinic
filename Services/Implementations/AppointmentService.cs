@@ -327,11 +327,17 @@ namespace Services.Implementations
                                                 LastName = user.LastName,
                                                 ServiceName = service.Name,
                                                 StartTime = appt.StartTime,
-                                                EndTime =  ConvertToLocalFast(clinic.Timezone, appt.EndTime),
+                                                EndTime =  appt.EndTime,
                                                 Status = appt.Status,
+                                                TimeZone = appt.Clinic.Timezone
                                                 
                                             }).ToListAsync();
 
+            foreach(var appointment in appointmentsFromDb)
+            {
+                appointment.StartTime = ConvertToLocalFast(appointment.TimeZone, appointment.StartTime);
+                appointment.EndTime = ConvertToLocalFast(appointment.TimeZone, appointment.EndTime);
+            }
             return appointmentsFromDb;
         }
 
