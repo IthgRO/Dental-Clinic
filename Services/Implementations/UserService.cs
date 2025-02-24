@@ -253,7 +253,7 @@ namespace Services.Implementations
 
                     int thresholdTimeInMinutes = -5;
 
-                    if(loginCodeFromDb is not null && loginCodeFromDb.Code == code && loginCodeFromDb.DateCreated >= DateTime.UtcNow.AddMinutes(thresholdTimeInMinutes))
+                    if (loginCodeFromDb is not null && loginCodeFromDb.Code == code && loginCodeFromDb.DateCreated >= DateTime.UtcNow.AddMinutes(thresholdTimeInMinutes))
                     {
                         var jwt = await Login(new LoginUserDto
                         {
@@ -279,6 +279,42 @@ namespace Services.Implementations
             else
             {
                 throw new Exception("Invalid credentials!");
+            }
+        }
+
+        public async Task ValidateAdminForSeeingDentistAppointmets(int adminId, int dentistId)
+        {
+            var admin = await _db.Users
+                .Where(x => x.Id == adminId)
+                .FirstOrDefaultAsync();
+
+            var dentist = await _db.Users
+                .Where(x => x.Id == dentistId)
+                .FirstOrDefaultAsync();
+
+            if(admin is null)
+            {
+                throw new Exception("User could not be found!");
+            }
+
+            if (dentist is null)
+            {
+                throw new Exception("Dentist could not be found!");
+            }
+
+            if (admin.Role != UserRole.Admin)
+            {
+                throw new Exception("This user is not an admin!");
+            }
+
+            if (dentist.Role != UserRole.Dentist)
+            {
+                throw new Exception("This user is not a dentist!");
+            }
+
+            if (admin.ClinicId != dentist.ClinicId)
+            {
+                throw new Exception("The admin and the dentist belong to different clinics!");
             }
         }
     }

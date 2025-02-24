@@ -11,5 +11,6 @@ namespace Services.Models.Reservation
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public AppointmentStatus Status { get; set; }
+        public ClinicTimezone TimeZone { get; set; }
     }
 }
