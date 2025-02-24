@@ -203,7 +203,9 @@ namespace Dental_Clinic.Controllers
                 var currentUser = await _userService.GetUserByIdAsync(confirmedAppointment.PatientId);
                 if (currentUser == null)
                     return NotFound("User not found.");
-                    
+                
+                var localStartTime = _clinicService.ConvertUtcToLocal(confirmedAppointment.ClinicId, confirmedAppointment.StartTime);
+
                 // Get the user's preferred reminder type (could be Email, SMS, or Both)
                 var reminderType = _userService.GetUserReminderType(confirmedAppointment.PatientId);
 

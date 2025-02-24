@@ -10,6 +10,7 @@ public interface IClinicService
     Task<ClinicDto?> GetClinicByIdAsync(int clinicId);
     Task UpdateClinicAddress(int dentistId, string address);
     DateTime ConvertToUtc(int clinicId, DateTime localTime);
+    DateTime ConvertUtcToLocal(int clinicId, DateTime utcTime);
     string ConvertClinicTimezoneEnumToWindows(ClinicTimezone clinicTimezone);
     Task UploadClinicPicture(int dentistId, byte[] picture, string pictureType);
     Task<ClinicPicture> GetClinicPicture(int dentistId);
