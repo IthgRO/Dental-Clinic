@@ -17,5 +17,6 @@ namespace Services.Interfaces
         public Task ConfirmAppointment(int userId, int appointmentId);
 
         public Task UpdateAppointment(int userId, int appointmentId, DateTime newDate);
+        Task<Dental_Clinic.Dtos.AppointmentDto> GetAppointmentByIdAsync(int appointmentId);
     }
 }

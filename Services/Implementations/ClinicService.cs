@@ -209,4 +209,18 @@ public class ClinicService : IClinicService
         };
 
     }
+    public DateTime ConvertUtcToLocal(int clinicId, DateTime utcTime)
+        {
+            var clinic = _context.Clinics.FirstOrDefault(c => c.Id == clinicId);
+            if (clinic == null)
+            {
+                throw new Exception("Clinic not found.");
+            }
+
+            // Convert the clinic's timezone enum to the Windows timezone ID.
+            var windowsTimeZoneId = ConvertClinicTimezoneEnumToWindows(clinic.Timezone);
+            var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(windowsTimeZoneId);
+
+            return TimeZoneInfo.ConvertTimeFromUtc(utcTime, timeZoneInfo);
+        }
 }

@@ -92,44 +92,10 @@ namespace Dental_Clinic.Controllers
                 // Convert StartDate (Clinic's Local Time) to UTC
                 var startDateUtc = _clinicService.ConvertToUtc(request.ClinicId, request.StartDate);
 
-                var booked_appointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, startDateUtc);
-                var reminderType = _userService.GetUserReminderType(userId);
-                var reminder = new ReminderDto
-                {
-                    AppointmentId = booked_appointment.Id,
-                    Type = reminderType,
-                    Status = ReminderStatus.Pending,
-                    Timezone = _clinicService.ConvertClinicTimezoneEnumToWindows(clinic.Timezone),
-                    SendAt = startDateUtc.AddHours(-1),
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                    Appointment = booked_appointment
-                };
+                // Create the appointment and store it in the database
+                var bookedAppointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, startDateUtc);
 
-                await _reminderService.CreateReminderAsync(reminder);
-                var emailDto = new EmailDto
-                {
-                    DentistId = request.DentistId,
-                    ClinicId = request.ClinicId,
-                    ServiceId = request.ServiceId,
-                    StartTime = request.StartDate,
-                    To = currentUser.Email,
-                    Status = Enums.AppointmentStatus.Pending
-
-                };
-                _emailService.SendEmail(emailDto);
-                var smsDto = new SmsDto
-                {
-                    To = currentUser.Phone,
-                    StartTime = request.StartDate,
-                    ClinicId = request.ClinicId,
-                    ServiceId = request.ServiceId,
-                    DentistId = request.DentistId,
-                    Status = AppointmentStatus.Pending
-                };
-
-                //_smsService.SendSms(smsDto);
-                return Ok();
+                return Ok(bookedAppointment);
             }
             catch (Exception ex)
             {
@@ -240,14 +206,78 @@ namespace Dental_Clinic.Controllers
                 var user = User.FindFirstValue(ClaimTypes.Actor);
                 var userId = Int32.Parse(user);
 
+                // Confirm the appointment (this method should update the appointment's status to Confirmed)
+                // and return the confirmed appointment details.
                 await _appointmentService.ConfirmAppointment(userId, request.AppointmentId);
-                return Ok();
+
+                // Retrieve the confirmed appointment details from the DB
+                var confirmedAppointment = await _appointmentService.GetAppointmentByIdAsync(request.AppointmentId);
+                if (confirmedAppointment == null)
+                    return NotFound("Appointment not found.");
+
+                // Retrieve additional details required for notifications
+                var clinic = await _clinicService.GetClinicByIdAsync(confirmedAppointment.ClinicId);
+                if (clinic == null)
+                    return NotFound("Clinic not found.");
+
+                var currentUser = await _userService.GetUserByIdAsync(confirmedAppointment.PatientId);
+                if (currentUser == null)
+                    return NotFound("User not found.");
+                
+                var localStartTime = _clinicService.ConvertUtcToLocal(confirmedAppointment.ClinicId, confirmedAppointment.StartTime);
+
+                // Get the user's preferred reminder type (could be Email, SMS, or Both)
+                var reminderType = _userService.GetUserReminderType(confirmedAppointment.PatientId);
+
+                // Create a reminder to be sent 1 hour before the appointment.
+                var reminder = new ReminderDto
+                {
+                    AppointmentId = confirmedAppointment.Id,
+                    Type = reminderType,
+                    Status = ReminderStatus.Pending,
+                    Timezone = _clinicService.ConvertClinicTimezoneEnumToWindows(clinic.Timezone),
+                    SendAt = confirmedAppointment.StartTime.AddHours(-1), // stored as UTC
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    Appointment = confirmedAppointment
+                };
+
+                await _reminderService.CreateReminderAsync(reminder);
+
+                // Prepare and send the Email Notification
+                var emailDto = new EmailDto
+                {
+                    DentistId = confirmedAppointment.DentistId,
+                    ClinicId = confirmedAppointment.ClinicId,
+                    ServiceId = confirmedAppointment.ServiceId,
+                    StartTime = confirmedAppointment.StartTime, // display local time
+                    To = currentUser.Email,
+                    Status = AppointmentStatus.Confirmed
+                };
+
+                _emailService.SendEmail(emailDto);
+
+                // Prepare and send the SMS Notification
+                var smsDto = new SmsDto
+                {
+                    To = currentUser.Phone,
+                    StartTime = confirmedAppointment.StartTime, // display local time
+                    ClinicId = confirmedAppointment.ClinicId,
+                    ServiceId = confirmedAppointment.ServiceId,
+                    DentistId = confirmedAppointment.DentistId,
+                    Status = AppointmentStatus.Confirmed
+                };
+
+                _smsService.SendSms(smsDto);
+
+                return Ok(confirmedAppointment);
             }
             catch (Exception ex)
             {
                 return ErrorResponse.GetErrorResponse(ex);
             }
         }
+
 
         [HttpPost("sendDoctorLoginCode")]
         public async Task<IActionResult> SendDoctorLoginCode(SendLoginCodeRequest request)
