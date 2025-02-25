@@ -13,5 +13,8 @@ public interface IClinicService
     string ConvertClinicTimezoneEnumToWindows(ClinicTimezone clinicTimezone);
     Task UploadClinicPicture(int dentistId, byte[] picture, string pictureType);
     Task<ClinicPicture> GetClinicPicture(int dentistId);
+    string GenerateUniqueClinicCode();
+    Task<ClinicDto?> GetClinicByCodeAsync(string clinicCode);
+
 }
 
