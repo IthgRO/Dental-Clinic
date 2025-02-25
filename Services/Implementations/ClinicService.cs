@@ -209,4 +209,43 @@ public class ClinicService : IClinicService
         };
 
     }
+    // Generates a unique 6-digit clinic code
+    public string GenerateUniqueClinicCode()
+    {
+        string code;
+        Random rnd = new Random();
+        do
+        {
+            // Generate a 6-digit code (leading zeros included)
+            code = rnd.Next(0, 1000000).ToString("D6");
+        }
+        while (_context.Clinics.Any(c => c.ClinicCode == code));
+
+        return code;
+    }
+    public async Task<ClinicDto?> GetClinicByCodeAsync(string clinicCode)
+    {
+        return await _context.Clinics
+            .Where(c => c.ClinicCode == clinicCode)
+            .Select(c => new ClinicDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Address = c.Address,
+                City = c.City,
+                Country = c.Country,
+                Timezone = c.Timezone,
+                Phone = c.Phone,
+                Email = c.Email,
+                IsActive = c.IsActive,
+                CreatedAt = c.CreatedAt,
+                UpdatedAt = c.UpdatedAt,
+                Picture = c.Picture,
+                PictureFormat = c.PictureFormat,
+                ClinicCode = c.ClinicCode,
+                Users = c.Users,
+                Appointments = c.Appointments
+            })
+            .FirstOrDefaultAsync();
+    }
 }

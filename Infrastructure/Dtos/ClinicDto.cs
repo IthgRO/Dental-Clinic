@@ -40,6 +40,10 @@ public class ClinicDto
 
     public string? PictureFormat {  get; set; }
 
+    [Required]
+    [StringLength(6, MinimumLength = 6)]
+    public string ClinicCode { get; init; }
+
     public ICollection<UserDto> Users { get; set; } = new List<UserDto>();
 
     public ICollection<AppointmentDto> Appointments { get; set; } = new List<AppointmentDto>();

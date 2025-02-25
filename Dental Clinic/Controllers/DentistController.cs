@@ -278,5 +278,41 @@ namespace Dental_Clinic.Controllers
                 return ErrorResponse.GetErrorResponse(ex);
             }
         }
+        [HttpPost("registerDentist")]
+        public async Task<IActionResult> RegisterDentist(Requests.User.RegisterDentistRequest request)
+        {
+            try
+            {
+                // Look up the clinic by the provided clinic code
+                var clinic = await _clinicService.GetClinicByCodeAsync(request.ClinicCode);
+                if (clinic == null)
+                {
+                    return BadRequest(new { message = "Invalid code" });
+                }
+
+                // Create a new RegisterUserDto for the dentist
+                var newDentist = new Services.Models.User.RegisterUserDto
+                {
+                    Email = request.Email,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Phone = request.Phone,
+                    Password = request.Password, 
+                    ClinicId = clinic.Id,
+                    Role = Dental_Clinic.Enums.UserRole.Dentist,
+                    // Use the provided timezone or inherit from the clinic if none is provided
+                    Timezone = string.IsNullOrWhiteSpace(request.Timezone) ? clinic.Timezone.ToString() : request.Timezone
+                };
+
+                // Register the dentist via the user service
+                await _userService.RegisterUser(newDentist);
+
+                return Ok(newDentist);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
     }
 }
