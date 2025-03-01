@@ -17,11 +17,11 @@ public class UserDto
 
     [Required]
     [StringLength(100)]
-    public required string FirstName { get; init; }
+    public required string FirstName { get; set; }
 
     [Required]
     [StringLength(100)]
-    public required string LastName { get; init; }
+    public required string LastName { get; set; }
 
     [Phone]
     [StringLength(20)]

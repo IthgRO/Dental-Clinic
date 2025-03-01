@@ -276,20 +276,19 @@ namespace Services.Implementations
                 .Where(x => x.AppointmentId == appointmentId)
                 .FirstOrDefaultAsync();
 
-            if (reminderFromDb == null)
+            if (reminderFromDb is not null && reminderFromDb.Status != ReminderStatus.Sent)
             {
-                throw new Exception("The appointment for the reminder could not be found!");
+                reminderFromDb.SendAt = utcStart.AddHours(-1);
+                reminderFromDb.UpdatedAt = DateTime.UtcNow;
             }
 
-            else if (reminderFromDb.Status == ReminderStatus.Sent)
+            else if (reminderFromDb is not null && reminderFromDb.Status == ReminderStatus.Sent)
             {
                 throw new Exception("It is too late for you to change the appointment!");
             }
 
             appointmentFromDb.StartTime = utcStart;
             appointmentFromDb.EndTime = utcStart.AddHours(1);
-            reminderFromDb.SendAt = utcStart.AddHours(-1);
-            reminderFromDb.UpdatedAt = DateTime.UtcNow;
 
             await _db.SaveChangesAsync();
         }

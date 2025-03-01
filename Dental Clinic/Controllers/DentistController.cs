@@ -77,23 +77,8 @@ namespace Dental_Clinic.Controllers
             {
                 var user = User.FindFirstValue(ClaimTypes.Actor);
                 var userId = Int32.Parse(user);
-                var currentUser = await _userService.GetUserByIdAsync(userId);
-                if (currentUser == null)
-                {
-                    return NotFound("User not found.");
-                }
 
-                var clinic = await _clinicService.GetClinicByIdAsync(request.ClinicId);
-                if (clinic == null)
-                {
-                    return NotFound("Clinic not found.");
-                }
-
-                // Convert StartDate (Clinic's Local Time) to UTC
-                var startDateUtc = _clinicService.ConvertToUtc(request.ClinicId, request.StartDate);
-
-                // Create the appointment and store it in the database
-                var bookedAppointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, startDateUtc);
+                var bookedAppointment = await _appointmentService.BookAppointment(userId, request.DentistId, request.ServiceId, request.ClinicId, request.StartDate);
 
                 return Ok(bookedAppointment);
             }

@@ -317,5 +317,19 @@ namespace Services.Implementations
                 throw new Exception("The admin and the dentist belong to different clinics!");
             }
         }
+
+        public async Task UpdateUserInformation(int userId, UserUpdateInformationDto user)
+        {
+            var userFromDb = await _db.Users
+                .Where(x => x.Id == userId)
+                .FirstOrDefaultAsync() ?? throw new Exception("User with this id could not be found!");
+
+            userFromDb.FirstName = user.FirstName;
+            userFromDb.LastName = user.LastName;
+            userFromDb.Email = user.Email;
+            userFromDb.Phone = user.Phone;
+
+            await _db.SaveChangesAsync();
+        }
     }
 }

@@ -21,5 +21,7 @@ namespace Services.Interfaces
         ReminderType GetUserReminderType(int userId);
 
         public Task ValidateAdminForSeeingDentistAppointmets(int adminId, int dentistId);
+
+        public Task UpdateUserInformation(int userId, UserUpdateInformationDto user);
     }
 }

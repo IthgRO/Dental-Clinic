@@ -29,6 +29,9 @@ namespace Dental_Clinic.Mapper
             CreateMap<LoginResultDto, LoginResponse>()
                 .ReverseMap();
 
+            CreateMap<UpdateUserInfoRequest, UserUpdateInformationDto>()
+                .ReverseMap();
+
             #endregion
 
             #region Clinic

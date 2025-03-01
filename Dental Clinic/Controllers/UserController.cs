@@ -5,6 +5,7 @@ using Dental_Clinic.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 using Services.Models.User;
+using System.Security.Claims;
 
 namespace Dental_Clinic.Controllers
 {
@@ -78,6 +79,23 @@ namespace Dental_Clinic.Controllers
             try
             {
                 await _passwordService.ChangeForgottenPassword(request.Email, request.Code, request.NewPassword);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
+
+        [HttpPost("updateData")]
+        public async Task<IActionResult> UpdateUserData(UpdateUserInfoRequest request)
+        {
+            try
+            {
+                var user = User.FindFirstValue(ClaimTypes.Actor);
+                var userId = Int32.Parse(user);
+
+                await _userService.UpdateUserInformation(userId, _mapper.Map<UserUpdateInformationDto>(request));
                 return Ok();
             }
             catch (Exception ex)
