@@ -324,8 +324,6 @@ namespace Services.Implementations
                 .Where(x => x.Id == userId)
                 .FirstOrDefaultAsync() ?? throw new Exception("User with this id could not be found!");
 
-            userFromDb.FirstName = user.FirstName;
-            userFromDb.LastName = user.LastName;
             userFromDb.Email = user.Email;
             userFromDb.Phone = user.Phone;
 
