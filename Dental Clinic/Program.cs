@@ -10,7 +10,7 @@ using Services.Implementations;
 var builder = WebApplication.CreateBuilder(args);
 //var connectionString = "Server=(local)\\SQLEXPRESS;Database=DentalSolutionLocalDb;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
 
-var connectionString = "Server=tcp:itgh.database.windows.net,1433;Initial Catalog=DentalSolutionDb;Persist Security Info=False;User ID=indridiGG;Password=icelandPower33;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+var connectionString = "Server=tcp:dentaldev.database.windows.net,1433;Initial Catalog=dental_dev;Persist Security Info=False;User ID=indridiLogin;Password=indridiPassword1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 var jwt_secret = "abdivbeiuvbiaubviubviwnvjwnviubwnifbwuybvuwbfubvuebvuybwbfbfgwevgyv4354366erbvuwybvyuwbvueybve";
 
 builder.Services.AddDataAccess(connectionString);
