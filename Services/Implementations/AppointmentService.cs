@@ -22,75 +22,71 @@ namespace Services.Implementations
             var dentistFromDb = await _db.Users
                 .Where(x => x.Id == dentistId && x.Role == Dental_Clinic.Enums.UserRole.Dentist)
                 .Include(x => x.Clinic)
-                .FirstOrDefaultAsync();
-
-            if (dentistFromDb is null)
-            {
-                throw new Exception("Dentist cannot be identified!");
-            }
-            var freeSlots = new List<FreeSlot>();
-
-            startDate = SetToFixHour(startDate);
-            endDate = SetToFixHour(endDate);
-
+                .FirstOrDefaultAsync() ?? throw new Exception("Dentist cannot be identified!");
 
             if (dentistFromDb.Clinic == null)
                 throw new Exception("Clinic not found for the dentist");
 
-            int clinicId = dentistFromDb.Clinic.Id;
+            var freeSlots = new List<FreeSlot>();
 
             var utcStartDate = ConvertToUtcFast(dentistFromDb.Clinic.Timezone, startDate);
             var utcEndDate = ConvertToUtcFast(dentistFromDb.Clinic.Timezone, endDate);
 
             var appointments = await _db.Appointments
                 .Where(x => x.DentistId == dentistId &&
-                           x.StartTime >= utcStartDate &&
-                           x.EndTime <= utcEndDate &&
-                           x.Status != Dental_Clinic.Enums.AppointmentStatus.Cancelled)
+                            x.StartTime >= utcStartDate &&
+                            x.EndTime <= utcEndDate &&
+                            x.Status != Dental_Clinic.Enums.AppointmentStatus.Cancelled)
                 .ToListAsync();
 
-            for (DateTime date = startDate.Date; date <= endDate.Date; date = date.AddDays(1))
+            var schedules = await _db.DentistSchedules
+                .Where(ds => ds.DentistId == dentistId)
+                .ToListAsync();
+
+            for (var date = startDate.Date; date <= endDate.Date; date = date.AddDays(1))
             {
-                if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                var daySchedule = schedules
+                    .FirstOrDefault(s => s.DayOfWeek == date.DayOfWeek);
+
+                if (daySchedule == null)
+                    continue;
+
+                var currentStartTime = date.Date.Add(daySchedule.StartTime);
+                var currentEndTime = date.Date.Add(daySchedule.EndTime);
+
+                if (date.Date == startDate.Date && startDate > currentStartTime)
+                    currentStartTime = startDate;
+
+                if (date.Date == endDate.Date && endDate < currentEndTime)
+                    currentEndTime = endDate;
+
+                for (var candidateTime = currentStartTime; candidateTime < currentEndTime; candidateTime = candidateTime.AddMinutes(30))
                 {
-                    var default_start_date = TimeSpan.FromHours(9);
-                    var default_end_date = TimeSpan.FromHours(17);
+                    var candidateEndTime = candidateTime.AddMinutes(30);
 
-                    if (date == startDate.Date)
+                    if (candidateEndTime > currentEndTime)
+                        break;
+
+                    var utcCandidateStart = ConvertToUtcFast(dentistFromDb.Clinic.Timezone, candidateTime);
+                    var utcCandidateEnd = ConvertToUtcFast(dentistFromDb.Clinic.Timezone, candidateEndTime);
+
+                    var isTaken = appointments.Any(apt =>
+                        utcCandidateStart < apt.EndTime && utcCandidateEnd > apt.StartTime);
+
+                    if (!isTaken)
                     {
-                        default_start_date = TimeSpan.FromHours(Math.Max(startDate.Hour, 9));
-                    }
-                    if (date == endDate.Date)
-                    {
-                        default_end_date = TimeSpan.FromHours(Math.Min(endDate.Hour, 17));
-                    }
-
-                    for (var candidateHour = default_start_date; candidateHour < default_end_date; candidateHour += TimeSpan.FromHours(1))
-                    {
-                        var candidateDate = date + candidateHour;
-
-                        var utcCandidateDate = ConvertToUtcFast(dentistFromDb.Clinic.Timezone, candidateDate);
-                        var utcCandidateEndDate = ConvertToUtcFast(dentistFromDb.Clinic.Timezone, candidateDate.AddHours(1));
-
-                        var isTaken = appointments.Any(apt =>
-                            apt.StartTime <= utcCandidateDate &&
-                            utcCandidateDate < apt.EndTime);
-
-                        if (!isTaken)
+                        freeSlots.Add(new FreeSlot
                         {
-                            freeSlots.Add(new FreeSlot
-                            {
-                                StartTime = candidateDate,
-                                EndTime = candidateDate.AddHours(1)
-                            });
-                        }
+                            StartTime = candidateTime,
+                            EndTime = candidateEndTime
+                        });
                     }
                 }
             }
 
             return freeSlots;
         }
-    
+
 
         public async Task<Dental_Clinic.Dtos.AppointmentDto> BookAppointment(int userId, int dentistId, int serviceId, int clinicId, DateTime startDate)
         {

@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Models.Schedule;
+using System;
 
 namespace Services.Implementations
 {
@@ -19,24 +20,57 @@ namespace Services.Implementations
         {
             var dentistFromDb = await GetDentistFromDb(dentistId);
 
-            startTime = ConvertToUtcFast(dentistFromDb.Clinic.Timezone, startTime);
-            endTime = ConvertToUtcFast(dentistFromDb.Clinic.Timezone, endTime);
+            if (dentistFromDb.Clinic is null)
+            {
+                throw new Exception("Clinic of this dentist could not be found!");
+            }
+
+            startTime = this.ConvertToUtcFast(dentistFromDb.Clinic.Timezone, startTime);
+            endTime = this.ConvertToUtcFast(dentistFromDb.Clinic.Timezone, endTime);
 
             var existingSchedules = await _db.DentistSchedules
                 .Where(x => x.DentistId == dentistId)
                 .ToListAsync();
 
+            var adjustedDayOfWeek = dayOfWeek;
+            var adjustedStartTime = startTime;
+            var adjustedEndTime = endTime;
+
+            if (startTime < TimeSpan.Zero)
+            {
+                adjustedStartTime = startTime.Add(TimeSpan.FromHours(24));
+                adjustedEndTime = endTime.Add(TimeSpan.FromHours(24));
+                adjustedDayOfWeek = (DayOfWeek)(((int)dayOfWeek + 6) % 7);
+            }
+            else if (startTime >= TimeSpan.FromHours(24))
+            {
+                adjustedStartTime = startTime.Subtract(TimeSpan.FromHours(24));
+                adjustedEndTime = endTime.Subtract(TimeSpan.FromHours(24));
+                adjustedDayOfWeek = (DayOfWeek)(((int)dayOfWeek + 1) % 7);
+            }
+
+            if (adjustedEndTime < TimeSpan.Zero)
+            {
+                adjustedEndTime = adjustedEndTime.Add(TimeSpan.FromHours(24));
+                adjustedDayOfWeek = (DayOfWeek)(((int)adjustedDayOfWeek + 6) % 7);
+            }
+            else if (adjustedEndTime >= TimeSpan.FromHours(24))
+            {
+                adjustedEndTime = adjustedEndTime.Subtract(TimeSpan.FromHours(24));
+                adjustedDayOfWeek = (DayOfWeek)(((int)adjustedDayOfWeek + 1) % 7);
+            }
+
             foreach (var existingSchedule in existingSchedules)
             {
-                if (existingSchedule.StartTime > startTime && existingSchedule.StartTime < endTime)
+                if (existingSchedule.StartTime > adjustedStartTime && existingSchedule.StartTime < adjustedEndTime && existingSchedule.DayOfWeek == adjustedDayOfWeek)
                 {
                     throw new Exception("This slot already belongs to a schedule!");
                 }
-                else if (existingSchedule.EndTime > startTime && existingSchedule.EndTime < endTime)
+                else if (existingSchedule.EndTime > adjustedStartTime && existingSchedule.EndTime < adjustedEndTime && existingSchedule.DayOfWeek == adjustedDayOfWeek)
                 {
                     throw new Exception("This slot already belongs to a schedule!");
                 }
-                else if (existingSchedule.StartTime == startTime && existingSchedule.EndTime == endTime)
+                else if (existingSchedule.StartTime == adjustedStartTime && existingSchedule.EndTime == adjustedEndTime && existingSchedule.DayOfWeek == adjustedDayOfWeek)
                 {
                     throw new Exception("This slot already belongs to a schedule!");
                 }
@@ -45,9 +79,9 @@ namespace Services.Implementations
             _db.DentistSchedules.Add(new DentistScheduleDto
             {
                 DentistId = dentistId,
-                DayOfWeek = dayOfWeek,
-                StartTime = startTime,
-                EndTime = endTime,
+                DayOfWeek = adjustedDayOfWeek,
+                StartTime = adjustedStartTime,
+                EndTime = adjustedEndTime,
                 ClinicId = dentistFromDb.Clinic.Id
             });
 
@@ -59,9 +93,9 @@ namespace Services.Implementations
             var clinicTimeZoneId = ConvertClinicTimezoneEnumToWindows(timezone);
             var clinicTimeZone = TimeZoneInfo.FindSystemTimeZoneById(clinicTimeZoneId);
 
-            TimeSpan currentOffset = clinicTimeZone.GetUtcOffset(DateTime.UtcNow);
+            var currentOffset = clinicTimeZone.GetUtcOffset(DateTime.UtcNow);
 
-            TimeSpan utcTime = localTime - currentOffset;
+            var utcTime = localTime - currentOffset;
             return utcTime;
         }
 
@@ -70,9 +104,9 @@ namespace Services.Implementations
             var clinicTimeZoneId = ConvertClinicTimezoneEnumToWindows(timezone);
             var clinicTimeZone = TimeZoneInfo.FindSystemTimeZoneById(clinicTimeZoneId);
 
-            TimeSpan currentOffset = clinicTimeZone.GetUtcOffset(DateTime.UtcNow);
+            var currentOffset = clinicTimeZone.GetUtcOffset(DateTime.UtcNow);
 
-            TimeSpan utcTime = localTime + currentOffset;
+            var utcTime = localTime + currentOffset;
             return utcTime;
         }
 
@@ -168,12 +202,44 @@ namespace Services.Implementations
                     StartTime = x.StartTime,
                     EndTime = x.EndTime,
                     DayOfWeek = x.DayOfWeek,
+                    Id = x.Id,
                 }).ToListAsync();
 
             foreach (var schedule in schedules)
             {
                 schedule.StartTime = ConvertToLocalFast(dentistFromDb.Clinic.Timezone, schedule.StartTime);
                 schedule.EndTime = ConvertToLocalFast(dentistFromDb.Clinic.Timezone, schedule.EndTime);
+
+                var adjustedDayOfWeek = schedule.DayOfWeek;
+                var adjustedStartTime = schedule.StartTime;
+                var adjustedEndTime = schedule.EndTime;
+
+                if (schedule.StartTime < TimeSpan.Zero)
+                {
+                    adjustedStartTime = schedule.StartTime.Add(TimeSpan.FromHours(24));
+                    adjustedEndTime = schedule.EndTime.Add(TimeSpan.FromHours(24));
+                    adjustedDayOfWeek = (DayOfWeek)(((int)schedule.DayOfWeek + 6) % 7);
+                }
+                else if (schedule.StartTime >= TimeSpan.FromHours(24))
+                {
+                    adjustedStartTime = schedule.StartTime.Subtract(TimeSpan.FromHours(24));
+                    adjustedEndTime = schedule.EndTime.Subtract(TimeSpan.FromHours(24));
+                    adjustedDayOfWeek = (DayOfWeek)(((int)schedule.DayOfWeek + 1) % 7);
+                }
+
+                if (adjustedEndTime < TimeSpan.Zero)
+                {
+                    adjustedEndTime = adjustedEndTime.Add(TimeSpan.FromHours(24));
+                    adjustedDayOfWeek = (DayOfWeek)(((int)adjustedDayOfWeek + 6) % 7);
+                }
+                else if (adjustedEndTime >= TimeSpan.FromHours(24))
+                {
+                    adjustedEndTime = adjustedEndTime.Subtract(TimeSpan.FromHours(24));
+                    adjustedDayOfWeek = (DayOfWeek)(((int)adjustedDayOfWeek + 1) % 7);
+                }
+                schedule.StartTime = adjustedStartTime;
+                schedule.EndTime = adjustedEndTime;
+                schedule.DayOfWeek = adjustedDayOfWeek;
             }
 
             return schedules;
