@@ -5,10 +5,12 @@ using Dental_Clinic.Requests.User;
 using Dental_Clinic.Responses.Appointment;
 using Dental_Clinic.Responses.Clinic;
 using Dental_Clinic.Responses.Dentist;
+using Dental_Clinic.Responses.Invitation;
 using Dental_Clinic.Responses.Schedules;
 using Dental_Clinic.Responses.Service;
 using Dental_Clinic.Responses.User;
 using Services.Models.Clinic;
+using Services.Models.Invitation;
 using Services.Models.Reservation;
 using Services.Models.Schedule;
 using Services.Models.Service;
@@ -96,6 +98,13 @@ namespace Dental_Clinic.Mapper
             #region Schedule
 
             CreateMap<ScheduleDto, ScheduleViewModel>()
+                .ReverseMap();
+
+            #endregion
+
+            #region Invitation
+
+            CreateMap<InvitationDto, InvitationViewModel>()
                 .ReverseMap();
 
             #endregion

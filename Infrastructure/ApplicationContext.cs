@@ -25,6 +25,8 @@ namespace Infrastructure
 
         public DbSet<DoctorLoginAttemptDto> DoctorLoginAttempts { get; set; }
 
+        public DbSet<InvitationDto> Invitations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserDto>()

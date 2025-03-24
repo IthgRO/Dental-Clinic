@@ -19,6 +19,7 @@ namespace Dental_Clinic.StartupExtensions
             services.AddScoped<IServiceService, ServiceService>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IScheduleService, ScheduleService>();
+            services.AddScoped<IInvitationService, InvitationService>();
             services.AddScoped<IValidator<RegisterUserRequest>, RegisterUserRequestAbstractValidator>();
             services.AddScoped<IValidator<AddServiceToDentistRequest>, AddServiceToDentistRequestAbstractValidator>();
 

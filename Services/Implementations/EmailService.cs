@@ -1,10 +1,16 @@
 using MailKit.Security;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Win32;
 using MimeKit;
 using MimeKit.Text;
 using Services.Interfaces;
 using Services.Models;
 using Services.Models.User;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Threading;
+using Twilio.TwiML.Messaging;
 
 namespace Services.Implementations;
 
@@ -150,6 +156,67 @@ public class EmailService: IEmailService
         smtp.Connect(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
         smtp.Authenticate(_config.GetSection("EmailUserName").Value, _config.GetSection("EmailPassword").Value);
         smtp.Send(email);
+        smtp.Disconnect(true);
+    }
+
+    public void SendInvitationEmail(string emailTo, string clinicName)
+    {
+        var email = new MimeMessage();
+        email.From.Add(MailboxAddress.Parse(_config.GetSection("EmailUserName").Value));
+        email.To.Add(MailboxAddress.Parse(emailTo));
+        email.Subject = "Invitation to ORAXS";
+
+        var registrationLink = "";
+
+        string emailTemplate = $@"
+            <!DOCTYPE html>
+            <html lang='en'>
+            <head>
+                <meta charset='UTF-8'>
+                <title>ORAXS Invitation</title>
+            </head>
+            <body style='font-family: Arial, sans-serif; background-color: #f9fafb; margin: 0; padding: 0;'>
+                <table align='center' width='100%' cellpadding='0' cellspacing='0' style='max-width:600px; background-color:#ffffff; padding:20px; border-radius:8px; border:1px solid #eaeaea;'>
+                    <tr>
+                        <td align='center' style='padding-bottom: 20px; border-bottom: 1px solid #eaeaea;'>
+                            <h2 style='margin:0;'>Join ORAXS!</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style='padding-top:20px;'>
+                            <p>Hello,</p>
+                            <p>You have been invited by the administrator of <strong>{clinicName}</strong> to join ORAXS, a dental app to simplify your practice.</p>
+                            <p>To complete your registration, click the link below:</p>
+                            <p style='text-align: center; margin: 30px 0;'>
+                                <a href='{registrationLink}' style='background-color:#2d89ef; color:#ffffff; padding:10px 20px; text-decoration:none; border-radius:4px;'>Register Now</a>
+                            </p>
+                            <p>If you didn't expect this email, please ignore it.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align='center' style='font-size:12px; color:#888888; padding-top:20px;'>
+                            © ORAXS Dental App | All Rights Reserved
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+            ";
+
+        email.Body = new TextPart(TextFormat.Html) { Text = emailTemplate };
+        using var smtp = new MailKit.Net.Smtp.SmtpClient();
+        smtp.Connect(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
+        smtp.Authenticate(_config.GetSection("EmailUserName").Value, _config.GetSection("EmailPassword").Value);
+
+        try
+        {
+            smtp.Send(email);
+        }
+        catch (Exception)
+        {
+            throw new Exception("Invitation email could not be send!");
+        }
+
         smtp.Disconnect(true);
     }
 

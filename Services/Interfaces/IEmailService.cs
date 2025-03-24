@@ -12,4 +12,7 @@ public interface IEmailService
     void SendPasswordChangeCode(PasswordChangeAttemptDto request);
 
     void SendLoginCode(LoginCodeDto request);
+
+    void SendInvitationEmail(string emailTo, string clinicName);
 }
+

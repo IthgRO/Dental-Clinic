@@ -87,3 +87,9 @@ public enum ClinicTimezone
     // UTC (for default/fallback)
     CoordinatedUniversalTime  // UTC
 }
+
+public enum InvitationStatus
+{
+    Pending,
+    Accepted
+}
