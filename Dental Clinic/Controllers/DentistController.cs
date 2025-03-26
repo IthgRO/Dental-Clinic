@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 using Services.Models;
+using Services.Models.Dentist;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 
 namespace Dental_Clinic.Controllers
@@ -27,8 +29,9 @@ namespace Dental_Clinic.Controllers
         private readonly IReminderService _reminderService;
         private readonly IClinicService _clinicService;
         private readonly ISmsService _smsService;
+        private readonly IDentistService _dentistService;
 
-        public DentistController(IUserService userService, ISmsService smsService, IAppointmentService appointmentService, IEmailService emailService, IReminderService reminderService, IMapper mapper, IClinicService clinicService)
+        public DentistController(IUserService userService, ISmsService smsService, IAppointmentService appointmentService, IEmailService emailService, IReminderService reminderService, IMapper mapper, IClinicService clinicService, IDentistService dentistService)
         {
             _userService = userService;
             _emailService = emailService;
@@ -37,6 +40,7 @@ namespace Dental_Clinic.Controllers
             _reminderService = reminderService;
             _clinicService = clinicService;
             _smsService = smsService;
+            _dentistService = dentistService;
         }
 
         [HttpGet("seeAvailableDentists")]
@@ -287,6 +291,20 @@ namespace Dental_Clinic.Controllers
             {
                 var result = await _userService.LoginWithCode(request.Email, request.Password, request.Code);
                 return Ok(_mapper.Map<LoginResponse>(result));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse.GetErrorResponse(ex);
+            }
+        }
+
+        [HttpPost("registerDentist")]
+        public async Task<IActionResult> RegisterDentist(RegisterDentistRequest request)
+        {
+            try
+            {
+                await _dentistService.RegisterDentist(_mapper.Map<DentistRegisterDto>(request));
+                return Ok();
             }
             catch (Exception ex)
             {

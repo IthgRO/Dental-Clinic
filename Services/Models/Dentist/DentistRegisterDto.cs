@@ -1,11 +1,8 @@
-﻿using Dental_Clinic.Enums;
-
-namespace Services.Models.User
+﻿
+namespace Services.Models.Dentist
 {
-    public class RegisterUserDto
+    public class DentistRegisterDto
     {
-        public int Id { get; set; }
-
         public required string Email { get; set; }
 
         public required string FirstName { get; init; }
@@ -15,7 +12,6 @@ namespace Services.Models.User
         public required string Phone { get; set; }
 
         public string? Timezone { get; set; }
-
         public required string Password { get; set; }
     }
 }

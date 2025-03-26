@@ -69,13 +69,11 @@ namespace Services.Implementations
                 Phone = user.Phone,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                ClinicId = user.ClinicId,
                 CreatedAt = DateTime.UtcNow,
                 Timezone = user.Timezone,
                 IsActive = true,
                 Password = hashedPassword,
-                Role = user.Role,
-
+                Role = UserRole.Patient,
             };
             if (await _db.Users.AnyAsync(u => u.Email == user.Email))
             {
