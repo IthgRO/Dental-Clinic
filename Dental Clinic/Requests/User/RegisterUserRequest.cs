@@ -46,10 +46,7 @@ namespace Dental_Clinic.Requests.User
                 .Matches("[A-Z]").WithMessage("Password must contain an uppercase letter")
                 .Matches("[a-z]").WithMessage("Password must contain a lowercase letter")
                 .Matches("[0-9]").WithMessage("Password must contain a number");  
-
-            RuleFor(x => x.Role)
-                .IsInEnum()
-                .WithMessage("Role must be one of the predefined values: Patient, Dentist, Admin");   
+  
         }
         
 

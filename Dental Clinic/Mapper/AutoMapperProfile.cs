@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dental_Clinic.Dtos;
+using Dental_Clinic.Requests.Dentist;
 using Dental_Clinic.Requests.Service;
 using Dental_Clinic.Requests.User;
 using Dental_Clinic.Responses.Appointment;
@@ -10,6 +11,7 @@ using Dental_Clinic.Responses.Schedules;
 using Dental_Clinic.Responses.Service;
 using Dental_Clinic.Responses.User;
 using Services.Models.Clinic;
+using Services.Models.Dentist;
 using Services.Models.Invitation;
 using Services.Models.Reservation;
 using Services.Models.Schedule;
@@ -109,6 +111,12 @@ namespace Dental_Clinic.Mapper
 
             #endregion
 
+            #region Dentist
+
+            CreateMap<RegisterDentistRequest, DentistRegisterDto>()
+                .ReverseMap();
+
+            #endregion
 
         }
     }

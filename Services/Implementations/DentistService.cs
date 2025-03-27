@@ -38,7 +38,6 @@ public class DentistService : IDentistService
 
         var admin = await _context.Users
             .Where(x => x.Id == invitation.AdminId)
-            .Include(x => x.ClinicId)
             .FirstOrDefaultAsync() ?? throw new Exception("Clinic could not be found!");
 
         invitation.Status = InvitationStatus.Accepted;
@@ -56,6 +55,7 @@ public class DentistService : IDentistService
             ClinicId = admin.ClinicId,
             Role=UserRole.Dentist,
             CreatedAt = DateTime.UtcNow,
+            IsActive = true,
         });
 
         await _context.SaveChangesAsync();
