@@ -93,11 +93,7 @@ namespace Services.Implementations
             await ValidateIfUserIsDentist(dentistId);
 
 
-            if (startDate.Hour < 9 || startDate.Hour > 17)
-            {
-                throw new Exception("Dentist is not working during this time interval!");
-            }
-            else if (startDate.DayOfWeek == DayOfWeek.Saturday || startDate.DayOfWeek == DayOfWeek.Sunday)
+            if (startDate.DayOfWeek == DayOfWeek.Saturday || startDate.DayOfWeek == DayOfWeek.Sunday)
             {
                 throw new Exception("The dentist is not working on weekends!");
             }
@@ -105,15 +101,22 @@ namespace Services.Implementations
             startDate = SetToFixHour(startDate);
 
             var clinic = await _db.Clinics.FirstOrDefaultAsync(c => c.Id == clinicId);
+            var service = await _db.Services.FirstOrDefaultAsync(s => s.Id == serviceId);
+
             if (clinic == null)
             {
                 throw new Exception("Clinic not found.");
             }
+            if (service == null)
+            {
+                throw new Exception("Service not found!");
+            }
+
             // Convert StartTime to UTC
             var clinicTimeZoneId = _clinicService.ConvertClinicTimezoneEnumToWindows(clinic.Timezone);
             var utcStart = _clinicService.ConvertToUtc(clinicId, startDate);
 
-            await ValidateIfDentistIsFree(dentistId, utcStart);
+            await ValidateIfDentistIsFree(dentistId, utcStart, service.Duration);
 
             var newAppointment = new Dental_Clinic.Dtos.AppointmentDto
             {
@@ -122,7 +125,7 @@ namespace Services.Implementations
                 PatientId = userId,
                 ServiceId = serviceId,
                 StartTime = utcStart, // Store the time in UTC
-                EndTime = utcStart.AddHours(1),
+                EndTime = utcStart.AddMinutes(service.Duration),
                 Timezone = clinicTimeZoneId,
                 Status = AppointmentStatus.Pending,
                 CreatedAt = DateTime.UtcNow,
@@ -144,11 +147,18 @@ namespace Services.Implementations
             }
         }
 
-        private async Task ValidateIfDentistIsFree(int dentistId, DateTime startDate)
+        private async Task ValidateIfDentistIsFree(int dentistId, DateTime startDate, int duration)
         {
-            var existingReservation = await _db.Appointments.Where(x => x.DentistId == dentistId && x.StartTime == startDate && x.Status != AppointmentStatus.Cancelled).AnyAsync();
+            var endDate = startDate.AddMinutes(duration);
 
-            if (existingReservation)
+            var hasOverlap = await _db.Appointments
+                .Where(x => x.DentistId == dentistId
+                            && x.Status != AppointmentStatus.Cancelled
+                            && x.StartTime < endDate
+                            && x.EndTime > startDate)
+                .AnyAsync();
+
+            if (hasOverlap)
             {
                 throw new Exception("The slot is not available for this dentist!");
             }
@@ -225,11 +235,7 @@ namespace Services.Implementations
         {
             newDate = SetToFixHour(newDate);
 
-            if (newDate.Hour < 9 || newDate.Hour > 17)
-            {
-                throw new Exception("Dentist is not working during this time interval!");
-            }
-            else if (newDate.DayOfWeek == DayOfWeek.Saturday || newDate.DayOfWeek == DayOfWeek.Sunday)
+            if (newDate.DayOfWeek == DayOfWeek.Saturday || newDate.DayOfWeek == DayOfWeek.Sunday)
             {
                 throw new Exception("The dentist is not working on weekends!");
             }
@@ -264,9 +270,16 @@ namespace Services.Implementations
             }
 
             var clinicTimeZoneId = _clinicService.ConvertClinicTimezoneEnumToWindows(dentistFromDb.Clinic.Timezone);
+
+            var service = await _db.Services.FirstOrDefaultAsync(s => s.Id == appointmentFromDb.ServiceId);
+            if (service == null)
+            {
+                throw new Exception("Service not found!");
+            }
+
             var utcStart = ConvertToUtcFast(dentistFromDb.Clinic.Timezone, newDate);
 
-            await ValidateIfDentistIsFree(appointmentFromDb.DentistId, utcStart);
+            await ValidateIfDentistIsFree(appointmentFromDb.DentistId, utcStart, service.Duration);
 
             var reminderFromDb = await _db.Reminders
                 .Where(x => x.AppointmentId == appointmentId)
@@ -296,7 +309,7 @@ namespace Services.Implementations
             date.Month,
             date.Day,
             date.Hour,
-            0,
+            date.Minute,
             0
             );
 
